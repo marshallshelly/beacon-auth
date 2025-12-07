@@ -11,14 +11,14 @@ on:
       - develop
 
 jobs:
-  test:
-    name: Test
-    runs-on: ${{ matrix.os }}
+  # Linux tests with PostgreSQL
+  test-linux:
+    name: Test (Linux)
+    runs-on: ubuntu-latest
 
-    # Only run PostgreSQL service on Linux
     services:
       postgres:
-        image: postgres
+        image: postgres:16
         env:
           POSTGRES_PASSWORD: postgres
           POSTGRES_DB: beaconauth_test
@@ -32,9 +32,7 @@ jobs:
 
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
         go-version: ["1.21", "1.22", "1.23"]
-      # Don't fail all jobs if one fails
       fail-fast: false
 
     steps:
@@ -56,8 +54,7 @@ jobs:
       - name: Build
         run: go build -v ./...
 
-      - name: Run tests (Linux with PostgreSQL)
-        if: matrix.os == 'ubuntu-latest'
+      - name: Run tests (with PostgreSQL)
         run: go test -v -race -coverprofile=coverage.out -covermode=atomic ./...
         env:
           POSTGRES_HOST: localhost
@@ -66,17 +63,48 @@ jobs:
           POSTGRES_PASSWORD: postgres
           POSTGRES_DB: beaconauth_test
 
-      - name: Run tests (macOS/Windows - skip postgres)
-        if: matrix.os != 'ubuntu-latest'
-        run: go test -v -race -coverprofile=coverage.out -covermode=atomic $(go list ./... | grep -v '/adapters/postgres')
-
       - name: Upload coverage to Codecov
-        if: matrix.os == 'ubuntu-latest' && matrix.go-version == '1.23'
+        if: matrix.go-version == '1.23'
         uses: codecov/codecov-action@v5
         with:
           file: ./coverage.out
           flags: unittests
           name: codecov-umbrella
+
+  # macOS and Windows tests (skip postgres adapter)
+  test-other:
+    name: Test (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [macos-latest, windows-latest]
+        go-version: ["1.21", "1.22", "1.23"]
+      fail-fast: false
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Set up Go
+        uses: actions/setup-go@v6
+        with:
+          go-version: ${{ matrix.go-version }}
+          cache: true
+
+      - name: Download dependencies
+        run: go mod download
+
+      - name: Verify dependencies
+        run: go mod verify
+
+      - name: Build
+        run: go build -v ./...
+
+      - name: Run tests (skip postgres)
+        shell: bash
+        run: |
+          go test -v -race $(go list ./... | grep -v '/adapters/postgres')
 
   lint:
     name: Lint
