@@ -66,7 +66,7 @@ func TestFiberIntegration_SignUp(t *testing.T) {
 	req := httptest.NewRequest("POST", "/auth/signup", bytes.NewReader(body))
 	req.Header.Set("Content-Type", "application/json")
 
-	resp, err := app.Test(req)
+	resp, err := app.Test(req, 10000)
 	if err != nil {
 		t.Fatalf("Failed to send request: %v", err)
 	}
@@ -114,7 +114,7 @@ func TestFiberIntegration_SignIn(t *testing.T) {
 	req := httptest.NewRequest("POST", "/auth/signup", bytes.NewReader(body))
 	req.Header.Set("Content-Type", "application/json")
 
-	resp, err := app.Test(req)
+	resp, err := app.Test(req, 10000)
 	if err != nil {
 		t.Fatalf("Signup failed: %v", err)
 	}
@@ -133,7 +133,7 @@ func TestFiberIntegration_SignIn(t *testing.T) {
 	req = httptest.NewRequest("POST", "/auth/signin", bytes.NewReader(body))
 	req.Header.Set("Content-Type", "application/json")
 
-	resp, err = app.Test(req)
+	resp, err = app.Test(req, 10000)
 	if err != nil {
 		t.Fatalf("Failed to send signin request: %v", err)
 	}
@@ -175,7 +175,7 @@ func TestFiberIntegration_RequireAuth(t *testing.T) {
 
 	// Test without authentication
 	req := httptest.NewRequest("GET", "/api/profile", nil)
-	resp, err := app.Test(req)
+	resp, err := app.Test(req, 10000)
 	if err != nil {
 		t.Fatalf("Failed to send request: %v", err)
 	}
@@ -195,7 +195,7 @@ func TestFiberIntegration_RequireAuth(t *testing.T) {
 	req = httptest.NewRequest("POST", "/auth/signup", bytes.NewReader(body))
 	req.Header.Set("Content-Type", "application/json")
 
-	resp, err = app.Test(req)
+	resp, err = app.Test(req, 10000)
 	if err != nil {
 		t.Fatalf("Signup failed: %v", err)
 	}
@@ -217,7 +217,7 @@ func TestFiberIntegration_RequireAuth(t *testing.T) {
 	req = httptest.NewRequest("GET", "/api/profile", nil)
 	req.Header.Set("Cookie", "test_session="+sessionCookie)
 
-	resp, err = app.Test(req)
+	resp, err = app.Test(req, 10000)
 	if err != nil {
 		t.Fatalf("Failed to send authenticated request: %v", err)
 	}
@@ -244,7 +244,7 @@ func TestFiberIntegration_SessionMiddleware(t *testing.T) {
 
 	// Test without session
 	req := httptest.NewRequest("GET", "/test", nil)
-	resp, err := app.Test(req)
+	resp, err := app.Test(req, 10000)
 	if err != nil {
 		t.Fatalf("Failed to send request: %v", err)
 	}
@@ -268,7 +268,7 @@ func TestFiberIntegration_SessionMiddleware(t *testing.T) {
 	req = httptest.NewRequest("POST", "/auth/signup", bytes.NewReader(body))
 	req.Header.Set("Content-Type", "application/json")
 
-	resp, err = app.Test(req)
+	resp, err = app.Test(req, 10000)
 	if err != nil {
 		t.Fatalf("Signup failed: %v", err)
 	}
@@ -286,7 +286,7 @@ func TestFiberIntegration_SessionMiddleware(t *testing.T) {
 	req = httptest.NewRequest("GET", "/test", nil)
 	req.Header.Set("Cookie", "test_session="+sessionCookie)
 
-	resp, err = app.Test(req)
+	resp, err = app.Test(req, 10000)
 	if err != nil {
 		t.Fatalf("Failed to send request with session: %v", err)
 	}
@@ -316,7 +316,7 @@ func TestFiberIntegration_GetSessionHandler(t *testing.T) {
 	req := httptest.NewRequest("POST", "/auth/signup", bytes.NewReader(body))
 	req.Header.Set("Content-Type", "application/json")
 
-	resp, err := app.Test(req)
+	resp, err := app.Test(req, 10000)
 	if err != nil {
 		t.Fatalf("Signup failed: %v", err)
 	}
@@ -334,7 +334,7 @@ func TestFiberIntegration_GetSessionHandler(t *testing.T) {
 	req = httptest.NewRequest("GET", "/auth/session", nil)
 	req.Header.Set("Cookie", "test_session="+sessionCookie)
 
-	resp, err = app.Test(req)
+	resp, err = app.Test(req, 10000)
 	if err != nil {
 		t.Fatalf("Failed to get session: %v", err)
 	}
