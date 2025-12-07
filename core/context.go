@@ -16,9 +16,11 @@ const (
 
 // AuthContext holds the authentication context
 type AuthContext struct {
-	Config  *Config
-	Adapter Adapter
-	Logger  Logger
+	Config         *Config
+	Adapter        Adapter
+	Logger         Logger
+	SessionManager SessionManager
+	DataManager    DataManager
 }
 
 // NewAuthContext creates a new auth context

@@ -137,3 +137,16 @@ type Logger interface {
 	Warn(msg string, fields ...interface{})
 	Error(msg string, fields ...interface{})
 }
+
+// SessionManager defines the interface for session management
+type SessionManager interface {
+	Create(ctx context.Context, userID string, opts *SessionOptions) (*Session, *User, string, error)
+}
+
+// DataManager defines high-level database operations
+type DataManager interface {
+	FindAccountByProvider(ctx context.Context, provider, accountID string) (*Account, error)
+	FindUserByEmail(ctx context.Context, email string) (*User, error)
+	CreateUser(ctx context.Context, email, name string) (*User, error)
+	CreateOAuthAccount(ctx context.Context, userID, provider, accountID, accessToken, refreshToken string, expiresAt *time.Time) (*Account, error)
+}

@@ -3,6 +3,7 @@ package core
 import (
 	"context"
 	"testing"
+	"time"
 )
 
 // mockAdapter is a simple mock adapter for testing
@@ -56,6 +57,36 @@ func (m *mockAdapter) ID() string {
 	return "mock"
 }
 
+// Mocks for managers
+type mockSessionManager struct{}
+
+func (m *mockSessionManager) Create(ctx context.Context, userID string, opts *SessionOptions) (*Session, *User, string, error) {
+	return &Session{}, &User{}, "token", nil
+}
+
+type mockDataManager struct{}
+
+func (m *mockDataManager) FindAccountByProvider(ctx context.Context, provider, accountID string) (*Account, error) {
+	return nil, nil
+}
+func (m *mockDataManager) FindUserByEmail(ctx context.Context, email string) (*User, error) {
+	return nil, nil
+}
+func (m *mockDataManager) CreateUser(ctx context.Context, email, name string) (*User, error) {
+	return &User{ID: "id"}, nil
+}
+func (m *mockDataManager) CreateOAuthAccount(ctx context.Context, userID, provider, accountID, accessToken, refreshToken string, expiresAt *time.Time) (*Account, error) {
+	return &Account{}, nil
+}
+
+func withMockFactories() Option {
+	return func(c *Config) error {
+		c.DataManagerFactory = func(a Adapter) DataManager { return &mockDataManager{} }
+		c.SessionManagerFactory = func(cfg *Config, a Adapter) (SessionManager, error) { return &mockSessionManager{}, nil }
+		return nil
+	}
+}
+
 func TestNew(t *testing.T) {
 	tests := []struct {
 		name    string
@@ -68,6 +99,7 @@ func TestNew(t *testing.T) {
 				WithSecret("test-secret"),
 				WithBaseURL("http://localhost:3000"),
 				WithAdapter(&mockAdapter{}),
+				withMockFactories(),
 			},
 			wantErr: false,
 		},
@@ -76,6 +108,7 @@ func TestNew(t *testing.T) {
 			opts: []Option{
 				WithBaseURL("http://localhost:3000"),
 				WithAdapter(&mockAdapter{}),
+				withMockFactories(),
 			},
 			wantErr: true,
 		},
@@ -84,6 +117,7 @@ func TestNew(t *testing.T) {
 			opts: []Option{
 				WithSecret("test-secret"),
 				WithBaseURL("http://localhost:3000"),
+				withMockFactories(),
 			},
 			wantErr: true,
 		},
@@ -92,6 +126,7 @@ func TestNew(t *testing.T) {
 			opts: []Option{
 				WithSecret("test-secret"),
 				WithAdapter(&mockAdapter{}),
+				withMockFactories(),
 			},
 			wantErr: true,
 		},
@@ -120,6 +155,7 @@ func TestAuthContext(t *testing.T) {
 		WithSecret("test-secret"),
 		WithBaseURL("http://localhost:3000"),
 		WithAdapter(adapter),
+		withMockFactories(),
 	)
 	if err != nil {
 		t.Fatalf("Failed to create auth: %v", err)

@@ -2,6 +2,8 @@ package core
 
 import (
 	"context"
+	"errors"
+	"fmt"
 	"net/http"
 )
 
@@ -66,6 +68,21 @@ func New(opts ...Option) (Auth, error) {
 
 	// Initialize context
 	a.ctx = NewAuthContext(cfg)
+
+	// Initialize managers
+	if cfg.DataManagerFactory == nil {
+		return nil, errors.New("DataManagerFactory is required (use generic New or configure manually)")
+	}
+	a.ctx.DataManager = cfg.DataManagerFactory(cfg.Adapter)
+
+	if cfg.SessionManagerFactory == nil {
+		return nil, errors.New("SessionManagerFactory is required")
+	}
+	sm, err := cfg.SessionManagerFactory(cfg, cfg.Adapter)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create session manager: %w", err)
+	}
+	a.ctx.SessionManager = sm
 
 	// Initialize plugin manager
 	pm := &PluginManager{

@@ -39,6 +39,10 @@ type Config struct {
 
 	// Advanced settings
 	Advanced *AdvancedConfig
+
+	// Factories (dependency injection)
+	SessionManagerFactory func(cfg *Config, adapter Adapter) (SessionManager, error)
+	DataManagerFactory    func(adapter Adapter) DataManager
 }
 
 // EmailPasswordConfig holds email/password authentication settings
@@ -92,11 +96,11 @@ type HooksConfig struct {
 
 // AdvancedConfig holds advanced configuration options
 type AdvancedConfig struct {
-	UseSecureCookies   bool
-	DisableCSRFCheck   bool
-	TrustedOrigins     []string
-	GenerateID         func() string
-	Logger             Logger
+	UseSecureCookies bool
+	DisableCSRFCheck bool
+	TrustedOrigins   []string
+	GenerateID       func() string
+	Logger           Logger
 }
 
 // Option is a functional option for configuring BeaconAuth
