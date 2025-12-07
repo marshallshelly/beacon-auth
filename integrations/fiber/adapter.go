@@ -81,9 +81,9 @@ func newRequestAdapter(c *fiber.Ctx) *requestAdapter {
 	}
 
 	// Copy headers
-	c.Request().Header.VisitAll(func(key, value []byte) {
+	for key, value := range c.Request().Header.All() {
 		req.Header.Add(string(key), string(value))
-	})
+	}
 
 	// Set RemoteAddr
 	req.RemoteAddr = c.IP()
