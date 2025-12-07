@@ -1,3 +1,6 @@
+# golangci-lint v2 configuration
+version: "2"
+
 linters:
   enable:
     - errcheck
@@ -6,8 +9,3 @@ linters:
     - ineffassign
     - staticcheck
     - unused
-
-issues:
-  exclude-use-default: false
-  max-issues-per-linter: 0
-  max-same-issues: 0
