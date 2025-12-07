@@ -22,27 +22,37 @@ import (
 
 func getTestConfig() *Config {
 	return &Config{
-		Host:     getEnv("PG_TEST_HOST", "localhost"),
-		Port:     getEnvInt("PG_TEST_PORT", 5432),
-		Database: getEnv("PG_TEST_DB", "beaconauth_test"),
-		Username: getEnv("PG_TEST_USER", "postgres"),
-		Password: getEnv("PG_TEST_PASSWORD", "postgres"),
+		Host:     getEnvOr("POSTGRES_HOST", "PG_TEST_HOST", "localhost"),
+		Port:     getEnvIntOr("POSTGRES_PORT", "PG_TEST_PORT", 5432),
+		Database: getEnvOr("POSTGRES_DB", "PG_TEST_DB", "beaconauth_test"),
+		Username: getEnvOr("POSTGRES_USER", "PG_TEST_USER", "postgres"),
+		Password: getEnvOr("POSTGRES_PASSWORD", "PG_TEST_PASSWORD", "postgres"),
 		SSLMode:  "disable",
 		MaxConns: 5,
 		MinConns: 1,
 	}
 }
 
-func getEnv(key, defaultValue string) string {
-	if value := os.Getenv(key); value != "" {
+// getEnvOr checks multiple env var names, returning first non-empty value or default
+func getEnvOr(primaryKey, secondaryKey, defaultValue string) string {
+	if value := os.Getenv(primaryKey); value != "" {
+		return value
+	}
+	if value := os.Getenv(secondaryKey); value != "" {
 		return value
 	}
 	return defaultValue
 }
 
-func getEnvInt(key string, defaultValue int) int {
-	if value := os.Getenv(key); value != "" {
-		// Simple int parsing for test
+// getEnvIntOr checks multiple env var names for int values
+func getEnvIntOr(primaryKey, secondaryKey string, defaultValue int) int {
+	if value := os.Getenv(primaryKey); value != "" {
+		var i int
+		if _, err := fmt.Sscanf(value, "%d", &i); err == nil {
+			return i
+		}
+	}
+	if value := os.Getenv(secondaryKey); value != "" {
 		var i int
 		if _, err := fmt.Sscanf(value, "%d", &i); err == nil {
 			return i

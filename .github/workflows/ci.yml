@@ -14,10 +14,28 @@ jobs:
   test:
     name: Test
     runs-on: ${{ matrix.os }}
+
+    # Only run PostgreSQL service on Linux
+    services:
+      postgres:
+        image: postgres
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: beaconauth_test
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
         go-version: ["1.21", "1.22", "1.23"]
+      # Don't fail all jobs if one fails
+      fail-fast: false
 
     steps:
       - name: Checkout code
@@ -38,8 +56,19 @@ jobs:
       - name: Build
         run: go build -v ./...
 
-      - name: Run tests
+      - name: Run tests (Linux with PostgreSQL)
+        if: matrix.os == 'ubuntu-latest'
         run: go test -v -race -coverprofile=coverage.out -covermode=atomic ./...
+        env:
+          POSTGRES_HOST: localhost
+          POSTGRES_PORT: 5432
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: beaconauth_test
+
+      - name: Run tests (macOS/Windows - skip postgres)
+        if: matrix.os != 'ubuntu-latest'
+        run: go test -v -race -coverprofile=coverage.out -covermode=atomic $(go list ./... | grep -v '/adapters/postgres')
 
       - name: Upload coverage to Codecov
         if: matrix.os == 'ubuntu-latest' && matrix.go-version == '1.23'
