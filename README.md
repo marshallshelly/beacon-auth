@@ -13,7 +13,7 @@ A modular, plugin-based authentication library for Go with support for multiple 
 ## Installation
 
 ```bash
-go get github.com/marshallshelly/beaconauth
+go get github.com/marshallshelly/beacon-auth
 ```
 
 ## Quick Start
@@ -25,8 +25,8 @@ import (
     "log"
     "net/http"
 
-    "github.com/marshallshelly/beaconauth"
-    "github.com/marshallshelly/beaconauth/adapters/postgres"
+    "github.com/marshallshelly/beacon-auth"
+    "github.com/marshallshelly/beacon-auth/adapters/postgres"
 )
 
 func main() {
@@ -76,11 +76,16 @@ func main() {
 - [x] Configuration system
 - [x] Context management
 - [x] Error handling
-- [ ] Adapter system
-- [ ] Session management
+- [x] Adapter system (Memory, PostgreSQL)
+- [x] Session management (Multi-layer: Cookie, Redis, Database)
+- [x] Password hashing (Argon2id)
+- [x] Secure token generation
+- [x] Email/Password authentication handlers
+- [x] Framework integrations (Fiber with multi-tenant support)
 - [ ] OAuth providers
-- [ ] Plugins
-- [ ] Framework integrations
+- [ ] Additional plugins (2FA, magic link, etc.)
+- [ ] Additional framework integrations (Chi, Gin, Echo)
+- [ ] Additional database adapters (MySQL, MongoDB, SQLite)
 - [ ] Documentation website
 
 ## Architecture

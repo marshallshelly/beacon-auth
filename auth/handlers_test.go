@@ -9,10 +9,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/marshallshelly/beaconauth/adapters/memory"
-	"github.com/marshallshelly/beaconauth/core"
-	"github.com/marshallshelly/beaconauth/crypto"
-	"github.com/marshallshelly/beaconauth/session"
+	"github.com/marshallshelly/beacon-auth/adapters/memory"
+	"github.com/marshallshelly/beacon-auth/core"
+	"github.com/marshallshelly/beacon-auth/crypto"
+	"github.com/marshallshelly/beacon-auth/session"
 )
 
 func setupTestHandler(t *testing.T) (*Handler, *session.Manager) {

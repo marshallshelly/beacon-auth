@@ -8,11 +8,11 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/logger"
-	beaconauth_fiber "github.com/marshallshelly/beaconauth/integrations/fiber"
-	"github.com/marshallshelly/beaconauth/adapters/postgres"
-	"github.com/marshallshelly/beaconauth/auth"
-	"github.com/marshallshelly/beaconauth/core"
-	"github.com/marshallshelly/beaconauth/session"
+	"github.com/marshallshelly/beacon-auth/adapters/postgres"
+	"github.com/marshallshelly/beacon-auth/auth"
+	"github.com/marshallshelly/beacon-auth/core"
+	beaconauth_fiber "github.com/marshallshelly/beacon-auth/integrations/fiber"
+	"github.com/marshallshelly/beacon-auth/session"
 )
 
 // Example_basicFiberIntegration demonstrates basic BeaconAuth integration with Fiber
@@ -34,14 +34,14 @@ func Example_basicFiberIntegration() {
 
 	// Create session manager
 	sessionConfig := &session.Config{
-		CookieName:        "app_session",
-		CookieSecure:      true,
-		CookieHTTPOnly:    true,
-		CookieSameSite:    "lax",
-		ExpiresIn:         7 * 24 * time.Hour,
-		EnableDBStore:     true,
-		Secret:            "your-secret-key-at-least-32-bytes",
-		Issuer:            "myapp",
+		CookieName:     "app_session",
+		CookieSecure:   true,
+		CookieHTTPOnly: true,
+		CookieSameSite: "lax",
+		ExpiresIn:      7 * 24 * time.Hour,
+		EnableDBStore:  true,
+		Secret:         "your-secret-key-at-least-32-bytes",
+		Issuer:         "myapp",
 	}
 
 	sessionManager, err := session.NewManager(sessionConfig, dbAdapter)
@@ -123,15 +123,15 @@ func Example_multiTenantFiberIntegration() {
 		sessionManager, exists := sessionManagerCache[tenant]
 		if !exists {
 			sessionConfig := &session.Config{
-				CookieName:        "session_" + tenant,
-				CookieSecure:      true,
-				CookieHTTPOnly:    true,
-				CookieSameSite:    "lax",
-				CookieDomain:      ".soulcareuk.com",
-				ExpiresIn:         7 * 24 * time.Hour,
-				EnableDBStore:     true,
-				Secret:            getTenantSecret(tenant),
-				Issuer:            "soulcareuk-" + tenant,
+				CookieName:     "session_" + tenant,
+				CookieSecure:   true,
+				CookieHTTPOnly: true,
+				CookieSameSite: "lax",
+				CookieDomain:   ".soulcareuk.com",
+				ExpiresIn:      7 * 24 * time.Hour,
+				EnableDBStore:  true,
+				Secret:         getTenantSecret(tenant),
+				Issuer:         "soulcareuk-" + tenant,
 			}
 
 			var err error

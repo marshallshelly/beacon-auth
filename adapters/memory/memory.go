@@ -8,7 +8,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/marshallshelly/beaconauth/core"
+	"github.com/marshallshelly/beacon-auth/core"
 )
 
 // MemoryAdapter is an in-memory adapter for testing

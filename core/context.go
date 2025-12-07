@@ -16,61 +16,17 @@ const (
 
 // AuthContext holds the authentication context
 type AuthContext struct {
-	Config           *Config
-	Adapter          Adapter
-	InternalAdapter  *InternalAdapter
-	SessionManager   *SessionManager
-	PasswordHasher   PasswordHasher
-	TokenGenerator   TokenGenerator
-	Logger           Logger
-	Plugins          []Plugin
-	PluginEndpoints  map[string]http.HandlerFunc
-	PluginMiddleware []MiddlewareConfig
-	PluginHooks      *HookRegistry
-}
-
-// InternalAdapter provides high-level database operations
-type InternalAdapter struct {
-	adapter Adapter
-}
-
-// SessionManager manages user sessions
-type SessionManager struct {
-	config  *SessionConfig
-	adapter Adapter
-}
-
-// PasswordHasher defines the interface for password hashing
-type PasswordHasher interface {
-	Hash(password string) (string, error)
-	Verify(password, hash string) (bool, error)
-}
-
-// TokenGenerator defines the interface for token generation
-type TokenGenerator interface {
-	Generate(length int) (string, error)
-}
-
-// MiddlewareConfig defines middleware to inject
-type MiddlewareConfig struct {
-	Path       string
-	Middleware func(http.Handler) http.Handler
-	Priority   int // Lower numbers run first
-}
-
-// HookRegistry manages lifecycle hooks
-type HookRegistry struct {
-	beforeHooks map[string][]Hook
-	afterHooks  map[string][]Hook
+	Config  *Config
+	Adapter Adapter
+	Logger  Logger
 }
 
 // NewAuthContext creates a new auth context
 func NewAuthContext(cfg *Config) *AuthContext {
 	return &AuthContext{
-		Config:          cfg,
-		Adapter:         cfg.Adapter,
-		Logger:          cfg.Advanced.Logger,
-		PluginEndpoints: make(map[string]http.HandlerFunc),
+		Config:  cfg,
+		Adapter: cfg.Adapter,
+		Logger:  cfg.Advanced.Logger,
 	}
 }
 

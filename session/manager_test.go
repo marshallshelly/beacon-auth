@@ -5,8 +5,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/marshallshelly/beaconauth/adapters/memory"
-	"github.com/marshallshelly/beaconauth/core"
+	"github.com/marshallshelly/beacon-auth/adapters/memory"
+	"github.com/marshallshelly/beacon-auth/core"
 )
 
 func TestManager_CreateAndGet(t *testing.T) {
@@ -316,33 +316,33 @@ func TestCookieStore_InvalidSignature(t *testing.T) {
 
 func TestManager_StrategyDetermination(t *testing.T) {
 	tests := []struct {
-		name            string
-		enableCookie    bool
-		enableRedis     bool
-		enableDB        bool
-		redisAddr       string
+		name             string
+		enableCookie     bool
+		enableRedis      bool
+		enableDB         bool
+		redisAddr        string
 		expectedStrategy Strategy
 	}{
 		{
-			name:            "cookie only",
-			enableCookie:    true,
-			enableRedis:     false,
-			enableDB:        false,
+			name:             "cookie only",
+			enableCookie:     true,
+			enableRedis:      false,
+			enableDB:         false,
 			expectedStrategy: StrategyCookieOnly,
 		},
 		{
-			name:            "db only",
-			enableCookie:    false,
-			enableRedis:     false,
-			enableDB:        true,
+			name:             "db only",
+			enableCookie:     false,
+			enableRedis:      false,
+			enableDB:         true,
 			expectedStrategy: StrategyDBOnly,
 		},
 		{
-			name:            "redis first",
-			enableCookie:    false,
-			enableRedis:     true,
-			enableDB:        true,
-			redisAddr:       "localhost:6379",
+			name:             "redis first",
+			enableCookie:     false,
+			enableRedis:      true,
+			enableDB:         true,
+			redisAddr:        "localhost:6379",
 			expectedStrategy: StrategyRedisFirst,
 		},
 	}

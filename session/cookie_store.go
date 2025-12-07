@@ -10,7 +10,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/marshallshelly/beaconauth/core"
+	"github.com/marshallshelly/beacon-auth/core"
 )
 
 // CookieStore implements Store using signed JWT-like tokens
@@ -30,10 +30,10 @@ func NewCookieStore(secret, issuer string) *CookieStore {
 
 // cookiePayload represents the data stored in the cookie
 type cookiePayload struct {
-	Session *core.Session `json:"session"`
-	User    *core.User    `json:"user,omitempty"`
-	Issuer  string        `json:"iss"`
-	IssuedAt int64        `json:"iat"`
+	Session  *core.Session `json:"session"`
+	User     *core.User    `json:"user,omitempty"`
+	Issuer   string        `json:"iss"`
+	IssuedAt int64         `json:"iat"`
 }
 
 // Get retrieves a session from a signed cookie token

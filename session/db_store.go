@@ -4,8 +4,8 @@ import (
 	"context"
 	"time"
 
-	"github.com/marshallshelly/beaconauth/adapter"
-	"github.com/marshallshelly/beaconauth/core"
+	"github.com/marshallshelly/beacon-auth/adapter"
+	"github.com/marshallshelly/beacon-auth/core"
 )
 
 // DBStore implements Store using the database adapter

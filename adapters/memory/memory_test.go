@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/marshallshelly/beaconauth/core"
+	"github.com/marshallshelly/beacon-auth/core"
 )
 
 func TestMemoryAdapter_Create(t *testing.T) {

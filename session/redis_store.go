@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/marshallshelly/beaconauth/core"
+	"github.com/marshallshelly/beacon-auth/core"
 	"github.com/redis/go-redis/v9"
 )
 

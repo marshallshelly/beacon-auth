@@ -4,9 +4,9 @@ import (
 	"context"
 	"testing"
 
-	"github.com/marshallshelly/beaconauth/adapter"
-	"github.com/marshallshelly/beaconauth/adapters/memory"
-	"github.com/marshallshelly/beaconauth/core"
+	"github.com/marshallshelly/beacon-auth/adapter"
+	"github.com/marshallshelly/beacon-auth/adapters/memory"
+	"github.com/marshallshelly/beacon-auth/core"
 )
 
 // Example: How to use the TestSuite with your adapter
@@ -50,7 +50,7 @@ func ExampleTestSuite_withPostgres() {
 	// This is example code, not runnable in tests
 
 	/*
-		import "github.com/marshallshelly/beaconauth/adapters/postgres"
+		import "github.com/marshallshelly/beacon-auth/adapters/postgres"
 
 		func TestPostgresAdapter(t *testing.T) {
 			ctx := context.Background()

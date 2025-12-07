@@ -4,7 +4,7 @@ import (
 	"context"
 	"time"
 
-	"github.com/marshallshelly/beaconauth/core"
+	"github.com/marshallshelly/beacon-auth/core"
 )
 
 // Store defines the interface for session storage backends

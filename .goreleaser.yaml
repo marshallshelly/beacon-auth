@@ -1,0 +1,113 @@
+# GoReleaser configuration for beacon-auth
+# Complete documentation at https://goreleaser.com
+version: 2
+
+before:
+  hooks:
+    # Ensure dependencies are up to date
+    - go mod tidy
+    # Run tests before building
+    - go test ./...
+
+builds:
+  - env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+      - windows
+      - darwin
+    goarch:
+      - amd64
+      - arm64
+      - arm
+    goarm:
+      - "6"
+      - "7"
+    ignore:
+      - goos: windows
+        goarch: arm
+      - goos: windows
+        goarch: arm64
+    ldflags:
+      - -s -w
+      - -X main.version={{.Version}}
+      - -X main.commit={{.Commit}}
+      - -X main.date={{.Date}}
+    # Skip building a binary since this is a library
+    # We'll create archives instead
+    skip: true
+
+archives:
+  - id: default
+    files:
+      - README.md
+      - LICENSE
+      - CHANGELOG.md
+
+checksum:
+  name_template: "checksums.txt"
+
+snapshot:
+  version_template: "{{ incpatch .Version }}-next"
+
+changelog:
+  sort: asc
+  use: github
+  filters:
+    exclude:
+      - "^docs:"
+      - "^test:"
+      - "^chore:"
+      - "^ci:"
+      - "merge conflict"
+      - "Merge pull request"
+  groups:
+    - title: "New Features"
+      regexp: '^.*?feat(\([[:word:]]+\))??!?:.+$'
+      order: 0
+    - title: "Bug Fixes"
+      regexp: '^.*?fix(\([[:word:]]+\))??!?:.+$'
+      order: 1
+    - title: "Documentation"
+      regexp: '^.*?docs(\([[:word:]]+\))??!?:.+$'
+      order: 2
+    - title: "Dependency Updates"
+      regexp: '^.*?(feat|fix)\(deps\)!?:.+$'
+      order: 3
+    - title: "Other Changes"
+      order: 999
+
+announce:
+  skip: "{{gt .Patch 0}}"
+
+release:
+  github:
+    owner: marshallshelly
+    name: beacon-auth
+  draft: false
+  prerelease: auto
+  mode: append
+  header: |
+    ## BeaconAuth {{ .Tag }} ({{ .Date }})
+
+    A modular, plugin-based authentication library for Go.
+
+    ### Installation
+
+    ```bash
+    go get github.com/marshallshelly/beacon-auth@{{ .Tag }}
+    ```
+
+  footer: |
+    ## What's Next?
+
+    Check out the [documentation](https://github.com/marshallshelly/beacon-auth) for more information.
+
+    **Full Changelog**: https://github.com/marshallshelly/beacon-auth/compare/{{ .PreviousTag }}...{{ .Tag }}
+
+# Go module proxy integration
+gomod:
+  proxy: true
+  env:
+    - GOPRIVATE=
+    - GOPROXY=https://proxy.golang.org,direct

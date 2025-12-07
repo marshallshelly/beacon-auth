@@ -7,7 +7,7 @@ import (
 
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
-	"github.com/marshallshelly/beaconauth/core"
+	"github.com/marshallshelly/beacon-auth/core"
 )
 
 // PostgresAdapter implements the Adapter interface for PostgreSQL
@@ -858,4 +858,3 @@ func scanRowTx(row pgx.Row, columns []string) (map[string]interface{}, error) {
 
 	return result, nil
 }
-

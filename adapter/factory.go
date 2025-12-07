@@ -5,18 +5,18 @@ import (
 	"encoding/json"
 	"time"
 
-	"github.com/marshallshelly/beaconauth/core"
+	"github.com/marshallshelly/beacon-auth/core"
 )
 
 // AdapterConfig defines adapter capabilities and transformations
 type AdapterConfig struct {
-	ID                   string
-	SupportsJSON         bool
-	SupportsDates        bool
-	SupportsBooleans     bool
-	SupportsTransaction  bool
-	FieldNameMapping     map[string]string // e.g., "id" -> "_id" for MongoDB
-	CustomTransformInput func(data map[string]interface{}) map[string]interface{}
+	ID                    string
+	SupportsJSON          bool
+	SupportsDates         bool
+	SupportsBooleans      bool
+	SupportsTransaction   bool
+	FieldNameMapping      map[string]string // e.g., "id" -> "_id" for MongoDB
+	CustomTransformInput  func(data map[string]interface{}) map[string]interface{}
 	CustomTransformOutput func(data map[string]interface{}) map[string]interface{}
 }
 

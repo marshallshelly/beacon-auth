@@ -7,10 +7,10 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/marshallshelly/beaconauth/adapter"
-	"github.com/marshallshelly/beaconauth/core"
-	"github.com/marshallshelly/beaconauth/crypto"
-	"github.com/marshallshelly/beaconauth/session"
+	"github.com/marshallshelly/beacon-auth/adapter"
+	"github.com/marshallshelly/beacon-auth/core"
+	"github.com/marshallshelly/beacon-auth/crypto"
+	"github.com/marshallshelly/beacon-auth/session"
 )
 
 // Handler provides HTTP handlers for authentication

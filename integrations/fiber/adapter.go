@@ -7,7 +7,7 @@ import (
 	"net/url"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/marshallshelly/beaconauth/core"
+	"github.com/marshallshelly/beacon-auth/core"
 )
 
 // responseAdapter adapts Fiber context to http.ResponseWriter

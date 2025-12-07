@@ -2,9 +2,9 @@ package fiber
 
 import (
 	"github.com/gofiber/fiber/v2"
-	"github.com/marshallshelly/beaconauth/auth"
-	"github.com/marshallshelly/beaconauth/core"
-	"github.com/marshallshelly/beaconauth/session"
+	"github.com/marshallshelly/beacon-auth/auth"
+	"github.com/marshallshelly/beacon-auth/core"
+	"github.com/marshallshelly/beacon-auth/session"
 )
 
 // SessionMiddleware creates Fiber middleware that loads session from request

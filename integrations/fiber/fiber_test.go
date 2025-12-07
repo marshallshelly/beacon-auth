@@ -9,10 +9,10 @@ import (
 	"time"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/marshallshelly/beaconauth/adapters/memory"
-	"github.com/marshallshelly/beaconauth/auth"
-	"github.com/marshallshelly/beaconauth/core"
-	"github.com/marshallshelly/beaconauth/session"
+	"github.com/marshallshelly/beacon-auth/adapters/memory"
+	"github.com/marshallshelly/beacon-auth/auth"
+	"github.com/marshallshelly/beacon-auth/core"
+	"github.com/marshallshelly/beacon-auth/session"
 )
 
 func setupTestApp(t *testing.T) (*fiber.App, *session.Manager, *Handler) {
@@ -23,14 +23,14 @@ func setupTestApp(t *testing.T) (*fiber.App, *session.Manager, *Handler) {
 
 	// Create session manager
 	sessionConfig := &session.Config{
-		CookieName:        "test_session",
-		CookieSecure:      false,
-		CookieHTTPOnly:    true,
-		CookieSameSite:    "lax",
-		ExpiresIn:         24 * time.Hour,
-		EnableDBStore:     true,
-		Secret:            "test-secret-key-at-least-32-bytes-long",
-		Issuer:            "test",
+		CookieName:     "test_session",
+		CookieSecure:   false,
+		CookieHTTPOnly: true,
+		CookieSameSite: "lax",
+		ExpiresIn:      24 * time.Hour,
+		EnableDBStore:  true,
+		Secret:         "test-secret-key-at-least-32-bytes-long",
+		Issuer:         "test",
 	}
 
 	sessionManager, err := session.NewManager(sessionConfig, dbAdapter)

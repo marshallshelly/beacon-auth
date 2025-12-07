@@ -2,7 +2,7 @@
 package beaconauth
 
 import (
-	"github.com/marshallshelly/beaconauth/core"
+	"github.com/marshallshelly/beacon-auth/core"
 )
 
 // Auth is the main authentication interface
@@ -28,18 +28,18 @@ var New = core.New
 
 // Configuration options
 var (
-	WithSecret           = core.WithSecret
-	WithBaseURL          = core.WithBaseURL
-	WithBasePath         = core.WithBasePath
-	WithAdapter          = core.WithAdapter
-	WithPlugins          = core.WithPlugins
-	WithMailer           = core.WithMailer
-	WithOAuthProviders   = core.WithOAuthProviders
-	WithRateLimit        = core.WithRateLimit
-	WithSessionConfig    = core.WithSessionConfig
-	WithEmailPassword    = core.WithEmailPassword
-	WithLogger           = core.WithLogger
-	WithTrustedOrigins   = core.WithTrustedOrigins
+	WithSecret         = core.WithSecret
+	WithBaseURL        = core.WithBaseURL
+	WithBasePath       = core.WithBasePath
+	WithAdapter        = core.WithAdapter
+	WithPlugins        = core.WithPlugins
+	WithMailer         = core.WithMailer
+	WithOAuthProviders = core.WithOAuthProviders
+	WithRateLimit      = core.WithRateLimit
+	WithSessionConfig  = core.WithSessionConfig
+	WithEmailPassword  = core.WithEmailPassword
+	WithLogger         = core.WithLogger
+	WithTrustedOrigins = core.WithTrustedOrigins
 )
 
 // Common errors

@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/marshallshelly/beaconauth/core"
+	"github.com/marshallshelly/beacon-auth/core"
 )
 
 // Manager orchestrates multi-layer session storage

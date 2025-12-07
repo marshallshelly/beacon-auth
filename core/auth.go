@@ -31,11 +31,10 @@ type Auth interface {
 
 // beaconAuth implements the Auth interface
 type beaconAuth struct {
-	config         *Config
-	ctx            *AuthContext
-	pluginManager  *PluginManager
-	router         http.Handler
-	sessionManager *SessionManager
+	config        *Config
+	ctx           *AuthContext
+	pluginManager *PluginManager
+	router        http.Handler
 }
 
 // PluginManager manages plugins
@@ -79,12 +78,6 @@ func New(opts ...Option) (Auth, error) {
 		if err := plugin.Init(a.ctx); err != nil {
 			return nil, err
 		}
-	}
-
-	// Initialize session manager (placeholder for now)
-	a.sessionManager = &SessionManager{
-		config:  cfg.Session,
-		adapter: cfg.Adapter,
 	}
 
 	// Build router (placeholder for now)

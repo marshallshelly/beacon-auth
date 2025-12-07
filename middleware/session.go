@@ -3,8 +3,8 @@ package middleware
 import (
 	"net/http"
 
-	"github.com/marshallshelly/beaconauth/core"
-	"github.com/marshallshelly/beaconauth/session"
+	"github.com/marshallshelly/beacon-auth/core"
+	"github.com/marshallshelly/beacon-auth/session"
 )
 
 // SessionMiddleware creates middleware that loads session from request

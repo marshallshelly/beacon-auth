@@ -7,7 +7,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/marshallshelly/beaconauth/core"
+	"github.com/marshallshelly/beacon-auth/core"
 )
 
 // These tests require a running PostgreSQL instance
