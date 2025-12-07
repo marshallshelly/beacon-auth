@@ -1,9 +1,23 @@
 // @ts-check
 import { defineConfig } from "astro/config";
 import starlight from "@astrojs/starlight";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 // https://astro.build/config
 export default defineConfig({
+  vite: {
+    resolve: {
+      alias: {
+        "@astrojs/starlight/components": path.resolve(
+          __dirname,
+          "./node_modules/@astrojs/starlight/components"
+        ),
+      },
+    },
+  },
   integrations: [
     starlight({
       title: "BeaconAuth",
