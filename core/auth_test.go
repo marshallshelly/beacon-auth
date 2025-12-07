@@ -78,6 +78,9 @@ func (m *mockDataManager) FindAccountByProvider(ctx context.Context, provider, a
 func (m *mockDataManager) FindUserByEmail(ctx context.Context, email string) (*User, error) {
 	return nil, nil
 }
+func (m *mockDataManager) UpdateUser(ctx context.Context, userID string, data map[string]interface{}) (*User, error) {
+	return &User{ID: userID}, nil
+}
 func (m *mockDataManager) CreateUser(ctx context.Context, email, name string) (*User, error) {
 	return &User{ID: "id"}, nil
 }

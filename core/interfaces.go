@@ -168,6 +168,7 @@ type DataManager interface {
 	FindAccountByProvider(ctx context.Context, provider, accountID string) (*Account, error)
 	FindUserByEmail(ctx context.Context, email string) (*User, error)
 	CreateUser(ctx context.Context, email, name string) (*User, error)
+	UpdateUser(ctx context.Context, userID string, data map[string]interface{}) (*User, error)
 	CreateOAuthAccount(ctx context.Context, userID, provider, accountID, accessToken, refreshToken string, expiresAt *time.Time) (*Account, error)
 	CreateCredentialAccount(ctx context.Context, userID, identifier, passwordHash string) (*Account, error)
 }

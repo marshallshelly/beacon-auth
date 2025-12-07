@@ -37,3 +37,8 @@ go.work.sum
 # GoReleaser
 dist/
 .goreleaser.yaml.bak
+
+# Website
+www/node_modules/
+www/.astro/
+www/dist/
