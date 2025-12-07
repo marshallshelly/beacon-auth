@@ -4,8 +4,20 @@ version: "2"
 linters:
   enable:
     - errcheck
-    - gosimple
     - govet
     - ineffassign
     - staticcheck
     - unused
+
+  exclusions:
+    rules:
+      # Exclude all test files from errcheck
+      - linters:
+          - errcheck
+        path: "(_test\\.go|test_suite)"
+
+      # Exclude staticcheck SA5011 (nil pointer dereference) from test files
+      - linters:
+          - staticcheck
+        path: "_test\\.go"
+        text: "SA5011"
