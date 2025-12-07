@@ -4,6 +4,7 @@ package beaconauth
 import (
 	"github.com/marshallshelly/beacon-auth/adapter"
 	"github.com/marshallshelly/beacon-auth/core"
+	"github.com/marshallshelly/beacon-auth/crypto"
 	"github.com/marshallshelly/beacon-auth/session"
 )
 
@@ -64,6 +65,10 @@ func New(opts ...Option) (Auth, error) {
 	factoryOpt := func(c *core.Config) error {
 		c.DataManagerFactory = func(adapterInstance core.Adapter) core.DataManager {
 			return adapter.NewInternalAdapter(adapterInstance)
+		}
+
+		c.PasswordHasherFactory = func() core.PasswordHasher {
+			return crypto.NewArgon2Hasher()
 		}
 
 		c.SessionManagerFactory = func(cfg *core.Config, adapterInstance core.Adapter) (core.SessionManager, error) {

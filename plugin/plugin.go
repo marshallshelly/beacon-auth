@@ -16,7 +16,7 @@ type Plugin interface {
 	Init(ctx *core.AuthContext) error
 
 	// Endpoints returns HTTP endpoints added by this plugin
-	Endpoints() map[string]Endpoint
+	Endpoints() map[string]core.Endpoint
 
 	// Hooks returns lifecycle hooks
 	Hooks() *HookConfig
@@ -26,12 +26,7 @@ type Plugin interface {
 }
 
 // Endpoint represents an HTTP endpoint
-type Endpoint struct {
-	Path    string
-	Method  string
-	Handler http.HandlerFunc
-	Options *EndpointOptions
-}
+type Endpoint = core.Endpoint
 
 // EndpointOptions holds endpoint configuration
 type EndpointOptions struct {

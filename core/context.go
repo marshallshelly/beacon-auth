@@ -21,6 +21,7 @@ type AuthContext struct {
 	Logger         Logger
 	SessionManager SessionManager
 	DataManager    DataManager
+	PasswordHasher PasswordHasher
 }
 
 // NewAuthContext creates a new auth context

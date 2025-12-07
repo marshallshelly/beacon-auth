@@ -2,8 +2,15 @@ package core
 
 import (
 	"context"
+	"net/http"
 	"time"
 )
+
+// Endpoint defines an API endpoint
+type Endpoint struct {
+	Method  string
+	Handler http.HandlerFunc
+}
 
 // Adapter defines the interface for database adapters
 type Adapter interface {
@@ -98,6 +105,9 @@ type Plugin interface {
 
 	// Init initializes the plugin with the auth context
 	Init(ctx *AuthContext) error
+
+	// Endpoints returns the plugin endpoints
+	Endpoints() map[string]Endpoint
 }
 
 // OAuthProvider defines the interface for OAuth providers
@@ -141,6 +151,16 @@ type Logger interface {
 // SessionManager defines the interface for session management
 type SessionManager interface {
 	Create(ctx context.Context, userID string, opts *SessionOptions) (*Session, *User, string, error)
+	Get(ctx context.Context, token string) (*Session, *User, error)
+	Update(ctx context.Context, session *Session) error
+	Delete(ctx context.Context, token string) error
+	DeleteByUserID(ctx context.Context, userID string) error
+}
+
+// PasswordHasher defines the interface for password hashing
+type PasswordHasher interface {
+	Hash(password string) (string, error)
+	Verify(password, hash string) (bool, error)
 }
 
 // DataManager defines high-level database operations
@@ -149,4 +169,5 @@ type DataManager interface {
 	FindUserByEmail(ctx context.Context, email string) (*User, error)
 	CreateUser(ctx context.Context, email, name string) (*User, error)
 	CreateOAuthAccount(ctx context.Context, userID, provider, accountID, accessToken, refreshToken string, expiresAt *time.Time) (*Account, error)
+	CreateCredentialAccount(ctx context.Context, userID, identifier, passwordHash string) (*Account, error)
 }

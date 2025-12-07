@@ -63,6 +63,12 @@ type mockSessionManager struct{}
 func (m *mockSessionManager) Create(ctx context.Context, userID string, opts *SessionOptions) (*Session, *User, string, error) {
 	return &Session{}, &User{}, "token", nil
 }
+func (m *mockSessionManager) Get(ctx context.Context, token string) (*Session, *User, error) {
+	return &Session{}, &User{}, nil
+}
+func (m *mockSessionManager) Update(ctx context.Context, session *Session) error      { return nil }
+func (m *mockSessionManager) Delete(ctx context.Context, token string) error          { return nil }
+func (m *mockSessionManager) DeleteByUserID(ctx context.Context, userID string) error { return nil }
 
 type mockDataManager struct{}
 
@@ -78,11 +84,24 @@ func (m *mockDataManager) CreateUser(ctx context.Context, email, name string) (*
 func (m *mockDataManager) CreateOAuthAccount(ctx context.Context, userID, provider, accountID, accessToken, refreshToken string, expiresAt *time.Time) (*Account, error) {
 	return &Account{}, nil
 }
+func (m *mockDataManager) CreateCredentialAccount(ctx context.Context, userID, identifier, passwordHash string) (*Account, error) {
+	return &Account{}, nil
+}
+
+type mockPasswordHasher struct{}
+
+func (m *mockPasswordHasher) Hash(password string) (string, error) {
+	return "hashed_" + password, nil
+}
+func (m *mockPasswordHasher) Verify(password, hash string) (bool, error) {
+	return hash == "hashed_"+password, nil
+}
 
 func withMockFactories() Option {
 	return func(c *Config) error {
 		c.DataManagerFactory = func(a Adapter) DataManager { return &mockDataManager{} }
 		c.SessionManagerFactory = func(cfg *Config, a Adapter) (SessionManager, error) { return &mockSessionManager{}, nil }
+		c.PasswordHasherFactory = func() PasswordHasher { return &mockPasswordHasher{} }
 		return nil
 	}
 }

@@ -43,6 +43,7 @@ type Config struct {
 	// Factories (dependency injection)
 	SessionManagerFactory func(cfg *Config, adapter Adapter) (SessionManager, error)
 	DataManagerFactory    func(adapter Adapter) DataManager
+	PasswordHasherFactory func() PasswordHasher
 }
 
 // EmailPasswordConfig holds email/password authentication settings

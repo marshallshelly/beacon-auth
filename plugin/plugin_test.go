@@ -68,7 +68,7 @@ func TestBasePlugin(t *testing.T) {
 func TestManager_Initialize(t *testing.T) {
 	plugin1 := newMockPlugin("plugin1")
 	plugin1.endpoints["/test1"] = Endpoint{
-		Path:   "/test1",
+
 		Method: "GET",
 		Handler: func(w http.ResponseWriter, r *http.Request) {
 			w.WriteHeader(http.StatusOK)
@@ -77,7 +77,7 @@ func TestManager_Initialize(t *testing.T) {
 
 	plugin2 := newMockPlugin("plugin2")
 	plugin2.endpoints["/test2"] = Endpoint{
-		Path:   "/test2",
+
 		Method: "POST",
 		Handler: func(w http.ResponseWriter, r *http.Request) {
 			w.WriteHeader(http.StatusOK)
@@ -116,14 +116,14 @@ func TestManager_Initialize(t *testing.T) {
 func TestManager_EndpointConflict(t *testing.T) {
 	plugin1 := newMockPlugin("plugin1")
 	plugin1.endpoints["/conflict"] = Endpoint{
-		Path:    "/conflict",
+
 		Method:  "GET",
 		Handler: func(w http.ResponseWriter, r *http.Request) {},
 	}
 
 	plugin2 := newMockPlugin("plugin2")
 	plugin2.endpoints["/conflict"] = Endpoint{
-		Path:    "/conflict",
+
 		Method:  "GET",
 		Handler: func(w http.ResponseWriter, r *http.Request) {},
 	}

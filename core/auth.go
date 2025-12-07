@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"strings"
 )
 
 // Auth is the main authentication interface
@@ -75,6 +76,11 @@ func New(opts ...Option) (Auth, error) {
 	}
 	a.ctx.DataManager = cfg.DataManagerFactory(cfg.Adapter)
 
+	if cfg.PasswordHasherFactory == nil {
+		return nil, errors.New("PasswordHasherFactory is required")
+	}
+	a.ctx.PasswordHasher = cfg.PasswordHasherFactory()
+
 	if cfg.SessionManagerFactory == nil {
 		return nil, errors.New("SessionManagerFactory is required")
 	}
@@ -98,10 +104,49 @@ func New(opts ...Option) (Auth, error) {
 	}
 
 	// Build router (placeholder for now)
-	a.router = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	// Build router
+	mux := http.NewServeMux()
+
+	// Normalize base path
+	basePath := cfg.BasePath
+	if !strings.HasPrefix(basePath, "/") {
+		basePath = "/" + basePath
+	}
+	basePath = strings.TrimRight(basePath, "/")
+
+	// Default route
+	rootPath := basePath
+	if rootPath == "" {
+		rootPath = "/"
+	}
+	mux.HandleFunc(rootPath, func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 		_, _ = w.Write([]byte("BeaconAuth"))
 	})
+
+	// Register plugin routes
+	for _, p := range pm.plugins {
+		for path, endpoint := range p.Endpoints() {
+			if !strings.HasPrefix(path, "/") {
+				path = "/" + path
+			}
+			fullPath := basePath + path
+
+			// Capture closure variable
+			handler := endpoint.Handler
+			method := endpoint.Method
+
+			mux.HandleFunc(fullPath, func(w http.ResponseWriter, r *http.Request) {
+				if method != "" && r.Method != method {
+					http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+					return
+				}
+				handler(w, r)
+			})
+		}
+	}
+
+	a.router = mux
 
 	cfg.Advanced.Logger.Info("BeaconAuth initialized successfully")
 
@@ -132,18 +177,44 @@ func (a *beaconAuth) Middleware() func(http.Handler) http.Handler {
 }
 
 func (a *beaconAuth) GetSession(ctx context.Context) (*Session, error) {
-	// Placeholder implementation
+	if a.ctx.SessionManager == nil {
+		return nil, errors.New("session manager not initialized")
+	}
+
+	// Try to get from request cookie
+	req := GetRequest(ctx)
+	if req != nil {
+		cookieName := a.ctx.Config.Session.CookieName
+		if cookie, err := req.Cookie(cookieName); err == nil {
+			session, _, err := a.ctx.SessionManager.Get(ctx, cookie.Value)
+			return session, err
+		}
+	}
+
+	// Try to get from session context (already populated by middleware?)
+	// Or maybe GetSession(ctx) assumes context already has it?
+	// The interface comment says "GetSession retrieves the session from a request".
+	// The Middleware populates it.
+	// If middleware ran, GetSession(ctx) should return ctx value?
+	// But GetSession on struct usually implies logic to extract.
+
+	// Let's stick to extraction logic.
 	return nil, ErrSessionNotFound
 }
 
 func (a *beaconAuth) CreateSession(ctx context.Context, userID string, opts *SessionOptions) (*Session, error) {
-	// Placeholder implementation
-	return nil, nil
+	if a.ctx.SessionManager == nil {
+		return nil, errors.New("session manager not initialized")
+	}
+	session, _, _, err := a.ctx.SessionManager.Create(ctx, userID, opts)
+	return session, err
 }
 
 func (a *beaconAuth) RevokeSession(ctx context.Context, token string) error {
-	// Placeholder implementation
-	return nil
+	if a.ctx.SessionManager == nil {
+		return errors.New("session manager not initialized")
+	}
+	return a.ctx.SessionManager.Delete(ctx, token)
 }
 
 func (a *beaconAuth) Close() error {

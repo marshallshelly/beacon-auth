@@ -257,6 +257,28 @@ func (ia *InternalAdapter) CreateOAuthAccount(ctx context.Context, userID, provi
 	return mapToAccount(result), nil
 }
 
+// CreateCredentialAccount creates a credential account
+func (ia *InternalAdapter) CreateCredentialAccount(ctx context.Context, userID, identifier, passwordHash string) (*core.Account, error) {
+	now := time.Now()
+	data := map[string]interface{}{
+		"id":            generateID(),
+		"user_id":       userID,
+		"account_id":    identifier,
+		"provider":      "local",
+		"provider_type": "credential",
+		"password":      passwordHash,
+		"created_at":    now,
+		"updated_at":    now,
+	}
+
+	result, err := ia.adapter.Create(ctx, "accounts", data)
+	if err != nil {
+		return nil, err
+	}
+
+	return mapToAccount(result), nil
+}
+
 // FindAccountByProvider finds an account by provider and account ID
 func (ia *InternalAdapter) FindAccountByProvider(ctx context.Context, provider, accountID string) (*core.Account, error) {
 	query := &core.Query{
