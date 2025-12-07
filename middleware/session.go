@@ -65,7 +65,7 @@ func RequireAuthJSON(manager *session.Manager) func(http.Handler) http.Handler {
 			if session == nil {
 				w.Header().Set("Content-Type", "application/json")
 				w.WriteHeader(http.StatusUnauthorized)
-				w.Write([]byte(`{"error":"unauthorized","message":"Authentication required"}`))
+				_, _ = w.Write([]byte(`{"error":"unauthorized","message":"Authentication required"}`))
 				return
 			}
 

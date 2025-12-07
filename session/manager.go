@@ -112,9 +112,9 @@ func (m *Manager) Get(ctx context.Context, token string) (*core.Session, *core.U
 			return nil, nil, err
 		}
 
-		// Cache in Redis for next time
+		// Cache in Redis if available (best effort - ignore errors)
 		if m.redisStore != nil {
-			m.redisStore.SetWithUser(ctx, session, user)
+			_ = m.redisStore.SetWithUser(ctx, session, user)
 		}
 
 		return session, user, nil
@@ -123,9 +123,9 @@ func (m *Manager) Get(ctx context.Context, token string) (*core.Session, *core.U
 		// Try database first
 		session, user, err := m.getFromDB(ctx, token)
 		if err == nil && session != nil {
-			// Cache in Redis
+			// Cache in Redis (best effort - ignore errors)
 			if m.redisStore != nil {
-				m.redisStore.SetWithUser(ctx, session, user)
+				_ = m.redisStore.SetWithUser(ctx, session, user)
 			}
 			return session, user, nil
 		}

@@ -59,8 +59,8 @@ func (r *RedisStore) Get(ctx context.Context, token string) (*core.Session, *cor
 
 	// Check if session is expired
 	if time.Now().After(sessionData.Session.ExpiresAt) {
-		r.Delete(ctx, token) // Clean up expired session
-		return nil, nil, nil
+		_ = r.Delete(ctx, token) // Clean up expired session (best effort)
+		return nil, nil, core.ErrSessionNotFound
 	}
 
 	return sessionData.Session, sessionData.User, nil

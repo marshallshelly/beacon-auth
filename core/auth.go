@@ -83,7 +83,7 @@ func New(opts ...Option) (Auth, error) {
 	// Build router (placeholder for now)
 	a.router = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
-		w.Write([]byte("BeaconAuth"))
+		_, _ = w.Write([]byte("BeaconAuth"))
 	})
 
 	cfg.Advanced.Logger.Info("BeaconAuth initialized successfully")

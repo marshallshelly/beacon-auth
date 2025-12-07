@@ -456,7 +456,10 @@ func mapToVerification(data map[string]interface{}) *core.Verification {
 
 func generateID() string {
 	b := make([]byte, 16)
-	rand.Read(b)
+	if _, err := rand.Read(b); err != nil {
+		// Fallback to timestamp-based ID if random read fails
+		return base64.URLEncoding.EncodeToString([]byte(time.Now().String()))[:22]
+	}
 	return base64.URLEncoding.EncodeToString(b)[:22]
 }
 

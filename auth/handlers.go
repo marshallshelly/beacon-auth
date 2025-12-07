@@ -219,11 +219,9 @@ func (h *Handler) SignOut(w http.ResponseWriter, r *http.Request) {
 
 	ctx := r.Context()
 
-	// Delete session
-	if err := h.sessionManager.Delete(ctx, cookie.Value); err != nil {
-		// Log error but don't fail the request
-		// Session might already be expired/deleted
-	}
+	// Delete the session
+	_ = h.sessionManager.Delete(ctx, cookie.Value)
+	// Ignore error as session cookie is being cleared anyway
 
 	// Clear session cookie
 	h.clearSessionCookie(w)
@@ -362,10 +360,14 @@ func (h *Handler) clearSessionCookie(w http.ResponseWriter) {
 	http.SetCookie(w, cookie)
 }
 
-func (h *Handler) writeJSON(w http.ResponseWriter, status int, data interface{}) {
+func (h *Handler) writeJSON(w http.ResponseWriter, statusCode int, data interface{}) {
 	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(status)
-	json.NewEncoder(w).Encode(data)
+	w.WriteHeader(statusCode)
+	if err := json.NewEncoder(w).Encode(data); err != nil {
+		// Log error but don't return since headers are already written
+		// In production, you'd use a proper logger here
+		_ = err
+	}
 }
 
 func (h *Handler) writeError(w http.ResponseWriter, status int, code, message string) {
