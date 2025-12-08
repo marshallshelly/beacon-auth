@@ -8,7 +8,7 @@ import (
 
 // TenantConfig holds tenant extraction configuration
 type TenantConfig struct {
-	// BaseDomain is the base domain (e.g., "soulcareuk.com")
+	// BaseDomain is the base domain (e.g., "example.com")
 	BaseDomain string
 
 	// TenantHeader is an optional header to check for tenant ID
@@ -62,7 +62,7 @@ func TenantMiddleware(config *TenantConfig) fiber.Handler {
 }
 
 // ExtractTenantFromHost extracts tenant subdomain from hostname
-// Example: "sunnyview.soulcareuk.com" with base "soulcareuk.com" returns "sunnyview"
+// Example: "sunnyview.example.com" with base "example.com" returns "sunnyview"
 func ExtractTenantFromHost(hostname, baseDomain string) string {
 	// Remove port if present
 	if idx := strings.IndexByte(hostname, ':'); idx != -1 {

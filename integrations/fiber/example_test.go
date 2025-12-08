@@ -85,7 +85,7 @@ func Example_multiTenantFiberIntegration() {
 
 	// CORS configuration for multi-tenant
 	app.Use(cors.New(cors.Config{
-		AllowOrigins:     "https://*.soulcareuk.com",
+		AllowOrigins:     "https://*.example.com",
 		AllowCredentials: true,
 	}))
 
@@ -93,7 +93,7 @@ func Example_multiTenantFiberIntegration() {
 
 	// Tenant extraction middleware
 	tenantConfig := &beaconauth_fiber.TenantConfig{
-		BaseDomain:    "soulcareuk.com",
+		BaseDomain:    "example.com",
 		TenantHeader:  "X-Tenant-ID",
 		DefaultTenant: "",
 	}
@@ -127,7 +127,7 @@ func Example_multiTenantFiberIntegration() {
 				CookieSecure:   true,
 				CookieHTTPOnly: true,
 				CookieSameSite: "lax",
-				CookieDomain:   ".soulcareuk.com",
+				CookieDomain:   ".example.com",
 				ExpiresIn:      7 * 24 * time.Hour,
 				EnableDBStore:  true,
 				Secret:         getTenantSecret(tenant),

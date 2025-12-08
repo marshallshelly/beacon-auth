@@ -248,7 +248,7 @@ app := fiber.New()
 
 // 1. Tenant extraction
 app.Use(beaconfiber.TenantMiddleware(&beaconfiber.TenantConfig{
-    BaseDomain: "soulcareuk.com",
+    BaseDomain: "example.com",
 }))
 
 // 2. Load tenant-specific database

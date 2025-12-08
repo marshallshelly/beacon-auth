@@ -16,44 +16,44 @@ func TestExtractTenantFromHost(t *testing.T) {
 	}{
 		{
 			name:       "valid subdomain",
-			hostname:   "sunnyview.soulcareuk.com",
-			baseDomain: "soulcareuk.com",
+			hostname:   "sunnyview.example.com",
+			baseDomain: "example.com",
 			expected:   "sunnyview",
 		},
 		{
 			name:       "with port",
-			hostname:   "acme.soulcareuk.com:3000",
-			baseDomain: "soulcareuk.com",
+			hostname:   "acme.example.com:3000",
+			baseDomain: "example.com",
 			expected:   "acme",
 		},
 		{
 			name:       "localhost",
 			hostname:   "localhost",
-			baseDomain: "soulcareuk.com",
+			baseDomain: "example.com",
 			expected:   "",
 		},
 		{
 			name:       "base domain only",
-			hostname:   "soulcareuk.com",
-			baseDomain: "soulcareuk.com",
+			hostname:   "example.com",
+			baseDomain: "example.com",
 			expected:   "",
 		},
 		{
 			name:       "different domain",
 			hostname:   "example.com",
-			baseDomain: "soulcareuk.com",
+			baseDomain: "example.com",
 			expected:   "",
 		},
 		{
 			name:       "multi-level subdomain",
-			hostname:   "app.sunnyview.soulcareuk.com",
-			baseDomain: "soulcareuk.com",
+			hostname:   "app.sunnyview.example.com",
+			baseDomain: "example.com",
 			expected:   "app",
 		},
 		{
 			name:       "IP address",
 			hostname:   "127.0.0.1",
-			baseDomain: "soulcareuk.com",
+			baseDomain: "example.com",
 			expected:   "",
 		},
 	}
@@ -73,7 +73,7 @@ func TestTenantMiddleware(t *testing.T) {
 	app := fiber.New()
 
 	config := &TenantConfig{
-		BaseDomain:   "soulcareuk.com",
+		BaseDomain:   "example.com",
 		TenantHeader: "X-Tenant-ID",
 	}
 
@@ -94,7 +94,7 @@ func TestTenantMiddleware(t *testing.T) {
 	}{
 		{
 			name:     "from subdomain",
-			hostname: "acme.soulcareuk.com",
+			hostname: "acme.example.com",
 			header:   "",
 			expected: "acme",
 		},
@@ -106,7 +106,7 @@ func TestTenantMiddleware(t *testing.T) {
 		},
 		{
 			name:     "header takes precedence",
-			hostname: "acme.soulcareuk.com",
+			hostname: "acme.example.com",
 			header:   "override",
 			expected: "override",
 		},
@@ -270,7 +270,7 @@ func TestTenantMiddleware_DefaultTenant(t *testing.T) {
 	app := fiber.New()
 
 	config := &TenantConfig{
-		BaseDomain:    "soulcareuk.com",
+		BaseDomain:    "example.com",
 		DefaultTenant: "default",
 		TenantHeader:  "", // Don't check header
 		TenantKey:     "tenant",
