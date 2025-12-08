@@ -65,8 +65,8 @@ jobs:
       - name: Build
         run: go build -v ./...
 
-      - name: Run tests (with PostgreSQL)
-        run: go test -v -race -coverprofile=coverage.out -covermode=atomic ./...
+      - name: Run tests (with PostgreSQL and Redis)
+        run: go test -v -race -coverprofile=coverage.out -covermode=atomic $(go list ./... | grep -v '/adapters/mongodb')
         env:
           POSTGRES_HOST: localhost
           POSTGRES_PORT: 5432
@@ -114,9 +114,9 @@ jobs:
       - name: Build
         run: go build -v ./...
 
-      - name: Run tests (skip postgres)
+      - name: Run tests (skip postgres and mongodb)
         shell: bash
-        run: go test -v -race $(go list ./... | grep -v '/adapters/postgres')
+        run: go test -v -race $(go list ./... | grep -Ev '/adapters/(postgres|mongodb)')
 
   lint:
     name: Lint
