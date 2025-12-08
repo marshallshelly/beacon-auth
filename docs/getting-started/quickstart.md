@@ -119,17 +119,81 @@ CREATE TABLE two_factors (
     user_id VARCHAR(255) REFERENCES users(id) ON DELETE CASCADE,
     secret TEXT NOT NULL, -- In production, ensure this is encrypted!
     confirmed BOOLEAN DEFAULT FALSE,
-    backup_codes TEXT,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Two Factor Backup Codes Table
+CREATE TABLE two_factor_backup_codes (
+    id VARCHAR(255) PRIMARY KEY,
+    user_id VARCHAR(255) REFERENCES users(id) ON DELETE CASCADE,
+    code VARCHAR(50) NOT NULL,
+    used BOOLEAN DEFAULT FALSE,
+    used_at TIMESTAMP WITH TIME ZONE,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(user_id, code)
 );
 ```
 
 ## 🚀 Next Steps
 
 - **Secure your app**: Set `WithSecret` from environment variables.
-- **Add OAuth**: Use `beaconauth.WithPlugins(oauth.New(github.Provider(...)))`.
+- **Add OAuth**: See OAuth Providers section below.
 - **Customize**: Explore [Configuration](../reference/configuration/) for session and security settings.
+
+## 🌐 OAuth Providers
+
+BeaconAuth supports multiple OAuth providers out of the box:
+
+```go
+import (
+    "github.com/marshallshelly/beacon-auth/plugins/oauth"
+    "github.com/marshallshelly/beacon-auth/plugins/oauth/providers"
+)
+
+// GitHub
+githubProvider := providers.NewGitHub(
+    "your-github-client-id",
+    "your-github-client-secret",
+    []string{"user:email"}, // scopes
+)
+
+// Google (with PKCE support)
+googleProvider := providers.NewGoogle(&providers.GoogleOptions{
+    ClientID:     "your-google-client-id",
+    ClientSecret: "your-google-client-secret",
+    AccessType:   "offline", // Request refresh token
+})
+
+// Discord
+discordProvider := providers.NewDiscord(&providers.DiscordOptions{
+    ClientID:     "your-discord-client-id",
+    ClientSecret: "your-discord-client-secret",
+    Prompt:       "none", // or "consent"
+})
+
+// Add to BeaconAuth
+auth, _ := beaconauth.New(
+    beaconauth.WithAdapter(adapter),
+    beaconauth.WithSecret("your-secret"),
+    beaconauth.WithBaseURL("http://localhost:3000"),
+    beaconauth.WithPlugins(
+        oauth.New(githubProvider, googleProvider, discordProvider),
+        emailpassword.New(),
+        twofa.New(),
+    ),
+)
+
+// OAuth endpoints will be available at:
+// - /auth/oauth/github/login
+// - /auth/oauth/github/callback
+// - /auth/oauth/google/login
+// - /auth/oauth/google/callback
+// - /auth/oauth/discord/login
+// - /auth/oauth/discord/callback
+```
+
 > MongoDB users: Use equivalent collections (`users`, `sessions`, `accounts`, `two_factors`). Field names are the same; indexes on `users.email`, `sessions.token`, and unique (`provider`, `account_id`) are recommended.
 
 ## 🔌 Using MongoDB (Alternative Adapter)

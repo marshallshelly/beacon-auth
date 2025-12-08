@@ -62,7 +62,7 @@ func (p *GoogleProvider) Name() string {
 
 func (p *GoogleProvider) Init() error {
 	if p.clientID == "" || p.clientSecret == "" {
-		return fmt.Errorf("Google client ID and secret are required")
+		return fmt.Errorf("google client ID and secret are required")
 	}
 	return nil
 }

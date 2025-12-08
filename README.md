@@ -66,6 +66,47 @@ func main() {
 }
 ```
 
+## OAuth Providers
+
+BeaconAuth supports multiple OAuth providers out of the box:
+
+```go
+import (
+    "github.com/marshallshelly/beacon-auth/plugins/oauth"
+    "github.com/marshallshelly/beacon-auth/plugins/oauth/providers"
+)
+
+// GitHub
+githubProvider := providers.NewGitHub(
+    "your-client-id",
+    "your-client-secret",
+    []string{"user:email"},
+)
+
+// Google (with PKCE)
+googleProvider := providers.NewGoogle(&providers.GoogleOptions{
+    ClientID:     "your-client-id",
+    ClientSecret: "your-client-secret",
+    AccessType:   "offline", // For refresh tokens
+})
+
+// Discord
+discordProvider := providers.NewDiscord(&providers.DiscordOptions{
+    ClientID:     "your-client-id",
+    ClientSecret: "your-client-secret",
+    Prompt:       "none", // or "consent"
+})
+
+// Add to BeaconAuth
+auth, _ := beaconauth.New(
+    beaconauth.WithAdapter(adapter),
+    beaconauth.WithPlugins(
+        oauth.New(githubProvider, googleProvider, discordProvider),
+    ),
+    // ... other options
+)
+```
+
 ## Project Status
 
 🚧 **In Development** - BeaconAuth is currently under active development. The API may change.
@@ -105,12 +146,12 @@ func main() {
 **Plugins:**
 
 - [x] Plugin system foundation
-- [x] OAuth plugin (GitHub provider implemented)
+- [x] OAuth plugin (3 providers: GitHub, Google, Discord)
 - [x] Email/Password plugin
 - [x] Two-Factor Authentication (TOTP + backup codes)
 - [ ] Magic link plugin
 - [ ] Passkey/WebAuthn plugin
-- [ ] Additional OAuth providers (Google, Discord, Apple, etc.)
+- [ ] Additional OAuth providers (Apple, Microsoft, Twitter, Facebook, etc.)
 
 **Framework Integrations:**
 

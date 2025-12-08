@@ -62,7 +62,7 @@ func (p *DiscordProvider) Name() string {
 
 func (p *DiscordProvider) Init() error {
 	if p.clientID == "" || p.clientSecret == "" {
-		return fmt.Errorf("Discord client ID and secret are required")
+		return fmt.Errorf("discord client ID and secret are required")
 	}
 	return nil
 }
