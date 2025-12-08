@@ -32,19 +32,37 @@ export default defineConfig({
           href: "https://github.com/marshallshelly/beacon-auth",
         },
       ],
+      editLink: {
+        baseUrl: "https://github.com/marshallshelly/beacon-auth/",
+      },
       customCss: ["./src/styles/custom.css"],
       sidebar: [
         {
           label: "Start Here",
-          items: [{ label: "Quickstart", slug: "getting-started/quickstart" }],
+          items: [
+            {
+              label: "Quickstart",
+              slug: "getting-started/quickstart",
+            },
+          ],
         },
         {
           label: "Guides",
-          items: [{ label: "Plugins System", slug: "guides/plugins" }],
+          items: [
+            {
+              label: "Plugins System",
+              slug: "guides/plugins",
+            },
+          ],
         },
         {
           label: "Reference",
-          items: [{ label: "Configuration", slug: "reference/configuration" }],
+          items: [
+            {
+              label: "Configuration",
+              slug: "reference/configuration",
+            },
+          ],
         },
       ],
     }),
