@@ -53,6 +53,15 @@ export default defineConfig({
           ],
         },
         {
+          label: "Integrations",
+          items: [
+            {
+              label: "Fiber",
+              slug: "integrations/fiber",
+            },
+          ],
+        },
+        {
           label: "Reference",
           items: [
             {

@@ -19,10 +19,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Documentation
 
+- **Fiber Integration Guide**: Comprehensive documentation for Fiber framework
+  - Session middleware and authentication helpers
+  - Multi-tenant architecture with subdomain extraction
+  - Tenant-specific database isolation
+  - Complete examples for single and multi-tenant apps
+  - Custom middleware patterns (role-based access, email verification)
 - Updated all provider documentation with Apple examples
 - Added Apple configuration to quickstart guide
 - Updated OAuth provider reference documentation
 - All provider count updated from 3 to 4 providers
+- README updated with Fiber-first quick start example
 
 ## [0.1.3] - 2025-12-08
 

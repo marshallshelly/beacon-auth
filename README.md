@@ -46,25 +46,64 @@ func main() {
     auth, err := beaconauth.New(
         beaconauth.WithAdapter(adapter),
         beaconauth.WithSecret("your-secret-key"),
-        beaconauth.WithBaseURL("http://localhost:3000"),
-    )
-    if err != nil {
-        log.Fatal(err)
-    }
-    defer auth.Close()
+    app := fiber.New()
 
-    // Mount auth routes
-    http.Handle("/auth/", http.StripPrefix("/auth", auth.Handler()))
+    // Database adapter
+    db, _ := postgres.New(context.Background(), &postgres.Config{
+        Host: "localhost", Port: 5432, Database: "myapp",
+        Username: "postgres", Password: "password",
+    })
+    defer db.Close()
 
-    // Protected route
-    http.Handle("/api/", auth.Middleware()(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-        session := beaconauth.GetSession(r.Context())
-        // Use session...
-    })))
+    // Session manager
+    sm, _ := session.NewManager(&session.Config{
+        CookieName: "session", CookieSecure: true,
+        ExpiresIn: 24 * time.Hour, EnableDBStore: true,
+        Secret: "your-secret-at-least-32-bytes-long",
+        Issuer: "myapp",
+    }, db)
 
-    log.Fatal(http.ListenAndServe(":3000", nil))
+    // Session middleware
+    app.Use(beaconfiber.SessionMiddleware(sm))
+
+    // Auth routes
+    authHandler := beaconfiber.NewHandler(db, sm, &auth.Config{
+        MinPasswordLength: 8,
+        AllowSignup:       true,
+    })
+    app.Post("/auth/signup", authHandler.SignUp)
+    app.Post("/auth/signin", authHandler.SignIn)
+    app.Post("/auth/signout", authHandler.SignOut)
+
+    // Protected routes
+    api := app.Group("/api")
+    api.Use(beaconfiber.RequireAuthJSON(sm))
+    api.Get("/profile", func(c *fiber.Ctx) error {
+        user := beaconfiber.GetUser(c)
+        return c.JSON(fiber.Map{"user": user})
+    })
+
+    log.Fatal(app.Listen(":3000"))
 }
 ```
+
+**Multi-Tenant Support:**
+
+```go
+// Tenant extraction from subdomain
+tenantConfig := &beaconfiber.TenantConfig{
+    BaseDomain: "myapp.com", // Extract from tenant1.myapp.com
+}
+app.Use(beaconfiber.TenantMiddleware(tenantConfig))
+
+// Tenant-specific databases
+app.Use(beaconfiber.TenantIsolationMiddleware(getTenantDB))
+
+// Access tenant in routes
+tenant := beaconfiber.GetTenant(c)
+```
+
+See [Fiber Integration Guide](./docs/integrations/fiber.md) for complete documentation.
 
 ## OAuth Providers
 
