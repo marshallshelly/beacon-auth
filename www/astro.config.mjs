@@ -8,6 +8,8 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 // https://astro.build/config
 export default defineConfig({
+  site: "https://marshallshelly.github.io/beacon-auth",
+  base: "/beacon-auth/",
   vite: {
     resolve: {
       alias: {
@@ -30,7 +32,7 @@ export default defineConfig({
           href: "https://github.com/marshallshelly/beacon-auth",
         },
       ],
-      customCss: ["/src/styles/custom.css"],
+      customCss: ["./src/styles/custom.css"],
       sidebar: [
         {
           label: "Start Here",
