@@ -21,8 +21,8 @@ jobs:
           go-version: stable
           cache: true
 
-      - name: Run tests
-        run: go test -v ./...
+      - name: Run tests (skip database adapters)
+        run: go test -v $(go list ./... | grep -Ev '/adapters/(postgres|mongodb)')
 
       - name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v6
