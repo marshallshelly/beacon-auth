@@ -19,42 +19,48 @@ Create a simple `main.go` file to set up the server with Email/Password and 2FA 
 package main
 
 import (
-	"log"
-	"net/http"
+    "context"
+    "log"
+    "net/http"
 
-	"github.com/marshallshelly/beacon-auth/beaconauth"
-	"github.com/marshallshelly/beacon-auth/adapters/postgres"
-	"github.com/marshallshelly/beacon-auth/plugins/emailpassword"
-	"github.com/marshallshelly/beacon-auth/plugins/twofa"
+    "github.com/marshallshelly/beacon-auth/beaconauth"
+    "github.com/marshallshelly/beacon-auth/adapters/postgres"
+    "github.com/marshallshelly/beacon-auth/plugins/emailpassword"
+    "github.com/marshallshelly/beacon-auth/plugins/twofa"
 )
 
 func main() {
-	// 1. Initialize Database Adapter
-	dsn := "host=localhost user=postgres password=postgres dbname=auth port=5432 sslmode=disable"
-	adapter, err := postgres.New(dsn)
+    // 1. Initialize Database Adapter (PostgreSQL)
+    adapter, err := postgres.New(context.Background(), &postgres.Config{
+        Host:     "localhost",
+        Port:     5432,
+        Database: "auth",
+        Username: "postgres",
+        Password: "postgres",
+    })
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	// 2. Configure BeaconAuth
-	auth, err := beaconauth.New(
-		beaconauth.WithAdapter(adapter),
-		beaconauth.WithSecret("your-super-secret-key-at-least-32-bytes"),
-		beaconauth.WithBaseURL("http://localhost:3000"),
-		// Register Plugins
-		beaconauth.WithPlugins(
-			emailpassword.New(), // Adds /auth/register, /auth/login
-			twofa.New(),         // Adds /auth/2fa/generate, /auth/enable
-		),
-	)
+    // 2. Configure BeaconAuth
+    auth, err := beaconauth.New(
+        beaconauth.WithAdapter(adapter),
+        beaconauth.WithSecret("your-super-secret-key-at-least-32-bytes"),
+        beaconauth.WithBaseURL("http://localhost:3000"),
+        // Register Plugins
+        beaconauth.WithPlugins(
+            emailpassword.New(), // Adds /auth/register, /auth/login
+            twofa.New(),         // Adds /auth/2fa/generate, /auth/enable, /auth/2fa/verify, /auth/2fa/disable
+        ),
+    )
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer auth.Close()
 
-	// 3. Mount Routes
-	// The handler mounts all plugin endpoints under the BasePath (default: /auth)
-	http.Handle("/auth/", auth.Handler())
+    // 3. Mount Routes
+    // The handler mounts all plugin endpoints under the BasePath (default: /auth)
+    http.Handle("/auth/", auth.Handler())
 
 	// 4. Start Server
 	log.Println("Server starting on :3000...")
@@ -98,7 +104,7 @@ CREATE TABLE accounts (
     account_id VARCHAR(255) NOT NULL,
     provider VARCHAR(255) NOT NULL,
     provider_type VARCHAR(50) NOT NULL, -- 'credential', 'oauth'
-    password TEXT, -- Encrypted password for credentials
+    password_hash TEXT, -- Encrypted password hash for credential login
     access_token TEXT,
     refresh_token TEXT,
     expires_at TIMESTAMP WITH TIME ZONE,
@@ -124,3 +130,40 @@ CREATE TABLE two_factors (
 - **Secure your app**: Set `WithSecret` from environment variables.
 - **Add OAuth**: Use `beaconauth.WithPlugins(oauth.New(github.Provider(...)))`.
 - **Customize**: Explore [Configuration](../reference/configuration/) for session and security settings.
+> MongoDB users: Use equivalent collections (`users`, `sessions`, `accounts`, `two_factors`). Field names are the same; indexes on `users.email`, `sessions.token`, and unique (`provider`, `account_id`) are recommended.
+
+## 🔌 Using MongoDB (Alternative Adapter)
+
+```go
+package main
+
+import (
+    "context"
+    "log"
+    "net/http"
+
+    "github.com/marshallshelly/beacon-auth/beaconauth"
+    "github.com/marshallshelly/beacon-auth/adapters/mongodb"
+)
+
+func main() {
+    // Initialize MongoDB adapter
+    adapter, err := mongodb.New(context.Background(), &mongodb.Config{
+        URI:      "mongodb://localhost:27017",
+        Database: "auth",
+    })
+    if err != nil { log.Fatal(err) }
+    defer adapter.Close()
+
+    auth, err := beaconauth.New(
+        beaconauth.WithAdapter(adapter),
+        beaconauth.WithSecret("your-super-secret-key-at-least-32-bytes"),
+        beaconauth.WithBaseURL("http://localhost:3000"),
+    )
+    if err != nil { log.Fatal(err) }
+    defer auth.Close()
+
+    http.Handle("/auth/", auth.Handler())
+    log.Fatal(http.ListenAndServe(":3000", nil))
+}
+```

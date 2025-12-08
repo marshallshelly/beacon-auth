@@ -31,6 +31,7 @@ Included in `github.com/marshallshelly/beacon-auth/plugins/twofa`.
 
 - `POST /auth/2fa/generate`: Generate a secret and QR code URI.
 - `POST /auth/2fa/enable`: Verify code and enable 2FA.
+- `POST /auth/2fa/verify`: Verify a TOTP code during login flows.
 - `POST /auth/2fa/disable`: Disable 2FA.
 
 ### 3. OAuth (`oauth`)
@@ -48,5 +49,5 @@ oauth.New(
 
 **Endpoints Added:**
 
-- `GET /auth/oauth/:provider`: Redirect to provider.
-- `GET /auth/oauth/:provider/callback`: Handle callback.
+- `GET /auth/oauth/{provider}/login`: Redirect to provider.
+- `GET /auth/oauth/{provider}/callback`: Handle callback.
