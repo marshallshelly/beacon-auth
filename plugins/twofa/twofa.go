@@ -46,12 +46,8 @@ type generateResponse struct {
 }
 
 type enableRequest struct {
-	Secret string `json:"secret"` // user confirms secret
-	Code   string `json:"code"`
-}
-
-type verifyRequest struct {
-	Code string `json:"code"`
+    Secret string `json:"secret"` // user confirms secret
+    Code   string `json:"code"`
 }
 
 // Helper middleware for plugin routes

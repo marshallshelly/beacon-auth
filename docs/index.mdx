@@ -36,17 +36,3 @@ import { Card, CardGrid } from "@astrojs/starlight/components";
     `net/http`.
   </Card>
 </CardGrid>
-
-<div style="margin-top: 4rem; text-align: center;">
-
-```go
-auth, _ := beaconauth.New(
-    beaconauth.WithAdapter(postgres.New(dsn)),
-    beaconauth.WithPlugins(
-        emailpassword.New(),
-        twofa.New(),
-    ),
-)
-```
-
-</div>

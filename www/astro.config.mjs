@@ -30,7 +30,7 @@ export default defineConfig({
           href: "https://github.com/marshallshelly/beacon-auth",
         },
       ],
-      customCss: ["./src/styles/custom.css"],
+      customCss: ["/src/styles/custom.css"],
       sidebar: [
         {
           label: "Start Here",
