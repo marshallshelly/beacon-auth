@@ -219,7 +219,7 @@ func (ia *InternalAdapter) CreateAccount(ctx context.Context, userID, provider, 
 		"id":            generateID(),
 		"user_id":       userID,
 		"account_id":    accountID,
-		"provider":      provider,
+		"provider_id":   provider,
 		"provider_type": "credential",
 		"created_at":    now,
 		"updated_at":    now,
@@ -237,16 +237,16 @@ func (ia *InternalAdapter) CreateAccount(ctx context.Context, userID, provider, 
 func (ia *InternalAdapter) CreateOAuthAccount(ctx context.Context, userID, provider, accountID, accessToken, refreshToken string, expiresAt *time.Time) (*core.Account, error) {
 	now := time.Now()
 	data := map[string]interface{}{
-		"id":            generateID(),
-		"user_id":       userID,
-		"account_id":    accountID,
-		"provider":      provider,
-		"provider_type": "oauth",
-		"access_token":  accessToken,
-		"refresh_token": refreshToken,
-		"expires_at":    expiresAt,
-		"created_at":    now,
-		"updated_at":    now,
+		"id":                      generateID(),
+		"user_id":                 userID,
+		"account_id":              accountID,
+		"provider_id":             provider,
+		"provider_type":           "oauth",
+		"access_token":            accessToken,
+		"refresh_token":           refreshToken,
+		"access_token_expires_at": expiresAt,
+		"created_at":              now,
+		"updated_at":              now,
 	}
 
 	result, err := ia.adapter.Create(ctx, "accounts", data)
@@ -264,7 +264,7 @@ func (ia *InternalAdapter) CreateCredentialAccount(ctx context.Context, userID, 
 		"id":            generateID(),
 		"user_id":       userID,
 		"account_id":    identifier,
-		"provider":      "local",
+		"provider_id":   "local",
 		"provider_type": "credential",
 		"password":      passwordHash,
 		"created_at":    now,
@@ -284,7 +284,7 @@ func (ia *InternalAdapter) FindAccountByProvider(ctx context.Context, provider, 
 	query := &core.Query{
 		Model: "accounts",
 		Where: []core.WhereClause{
-			{Field: "provider", Operator: core.OpEqual, Value: provider},
+			{Field: "provider_id", Operator: core.OpEqual, Value: provider},
 			{Field: "account_id", Operator: core.OpEqual, Value: accountID},
 		},
 	}
@@ -350,7 +350,22 @@ func (ia *InternalAdapter) FindVerification(ctx context.Context, token string) (
 
 func mapToUser(data map[string]interface{}) *core.User {
 	user := &core.User{
-		Fields: make(map[string]interface{}),
+		Metadata: make(map[string]interface{}),
+	}
+
+	knownFields := map[string]bool{
+		"id":                 true,
+		"email":              true,
+		"email_verified":     true,
+		"name":               true,
+		"image":              true,
+		"two_factor_enabled": true,
+		"created_at":         true,
+		"updated_at":         true,
+		"role":               true,
+		"banned":             true,
+		"ban_reason":         true,
+		"ban_expires":        true,
 	}
 
 	if id, ok := data["id"].(string); ok {
@@ -368,6 +383,23 @@ func mapToUser(data map[string]interface{}) *core.User {
 	if image, ok := data["image"].(string); ok {
 		user.Image = image
 	}
+	if twoFactor, ok := data["two_factor_enabled"].(bool); ok {
+		user.TwoFactorEnabled = twoFactor
+	}
+	if role, ok := data["role"].(string); ok {
+		user.Role = role
+	}
+	if banned, ok := data["banned"].(bool); ok {
+		user.Banned = banned
+	}
+	if banReason, ok := data["ban_reason"].(string); ok {
+		user.BanReason = banReason
+	}
+	if banExpires, ok := data["ban_expires"].(time.Time); ok {
+		user.BanExpires = &banExpires
+	} else if banExpires, ok := data["ban_expires"].(*time.Time); ok {
+		user.BanExpires = banExpires
+	}
 	if createdAt, ok := data["created_at"].(time.Time); ok {
 		user.CreatedAt = createdAt
 	}
@@ -375,11 +407,32 @@ func mapToUser(data map[string]interface{}) *core.User {
 		user.UpdatedAt = updatedAt
 	}
 
+	// Map remaining fields to Metadata
+	for k, v := range data {
+		if !knownFields[k] {
+			user.Metadata[k] = v
+		}
+	}
+
 	return user
 }
 
 func mapToSession(data map[string]interface{}) *core.Session {
-	session := &core.Session{}
+	session := &core.Session{
+		Metadata: make(map[string]interface{}),
+	}
+
+	knownFields := map[string]bool{
+		"id":              true,
+		"user_id":         true,
+		"token":           true,
+		"expires_at":      true,
+		"ip_address":      true,
+		"user_agent":      true,
+		"created_at":      true,
+		"updated_at":      true,
+		"impersonated_by": true,
+	}
 
 	if id, ok := data["id"].(string); ok {
 		session.ID = id
@@ -405,13 +458,39 @@ func mapToSession(data map[string]interface{}) *core.Session {
 	if updatedAt, ok := data["updated_at"].(time.Time); ok {
 		session.UpdatedAt = updatedAt
 	}
+	if impersonatedBy, ok := data["impersonated_by"].(string); ok {
+		session.ImpersonatedBy = impersonatedBy
+	}
+
+	for k, v := range data {
+		if !knownFields[k] {
+			session.Metadata[k] = v
+		}
+	}
 
 	return session
 }
 
 func mapToAccount(data map[string]interface{}) *core.Account {
 	account := &core.Account{
-		Fields: make(map[string]interface{}),
+		Metadata: make(map[string]interface{}),
+	}
+
+	knownFields := map[string]bool{
+		"id":                       true,
+		"user_id":                  true,
+		"account_id":               true,
+		"provider_id":              true,
+		"provider_type":            true,
+		"password":                 true,
+		"access_token":             true,
+		"refresh_token":            true,
+		"access_token_expires_at":  true,
+		"refresh_token_expires_at": true,
+		"scope":                    true,
+		"id_token":                 true,
+		"created_at":               true,
+		"updated_at":               true,
 	}
 
 	if id, ok := data["id"].(string); ok {
@@ -423,8 +502,8 @@ func mapToAccount(data map[string]interface{}) *core.Account {
 	if accountID, ok := data["account_id"].(string); ok {
 		account.AccountID = accountID
 	}
-	if provider, ok := data["provider"].(string); ok {
-		account.Provider = provider
+	if providerID, ok := data["provider_id"].(string); ok {
+		account.ProviderID = providerID
 	}
 	if providerType, ok := data["provider_type"].(string); ok {
 		account.ProviderType = providerType
@@ -438,9 +517,23 @@ func mapToAccount(data map[string]interface{}) *core.Account {
 	if refreshToken, ok := data["refresh_token"].(string); ok {
 		account.RefreshToken = refreshToken
 	}
-	if expiresAt, ok := data["expires_at"].(*time.Time); ok {
-		account.ExpiresAt = expiresAt
+	if expiresAt, ok := data["access_token_expires_at"].(time.Time); ok {
+		account.AccessTokenExpiresAt = &expiresAt
+	} else if expiresAt, ok := data["access_token_expires_at"].(*time.Time); ok {
+		account.AccessTokenExpiresAt = expiresAt
 	}
+	if refreshExpiresAt, ok := data["refresh_token_expires_at"].(time.Time); ok {
+		account.RefreshTokenExpiresAt = &refreshExpiresAt
+	} else if refreshExpiresAt, ok := data["refresh_token_expires_at"].(*time.Time); ok {
+		account.RefreshTokenExpiresAt = refreshExpiresAt
+	}
+	if scope, ok := data["scope"].(string); ok {
+		account.Scope = scope
+	}
+	if idToken, ok := data["id_token"].(string); ok {
+		account.IDToken = idToken
+	}
+
 	if createdAt, ok := data["created_at"].(time.Time); ok {
 		account.CreatedAt = createdAt
 	}
@@ -448,23 +541,26 @@ func mapToAccount(data map[string]interface{}) *core.Account {
 		account.UpdatedAt = updatedAt
 	}
 
+	// Populate Metadata with any fields not explicitly mapped
+	for k, v := range data {
+		if !knownFields[k] {
+			account.Metadata[k] = v
+		}
+	}
+
 	return account
 }
 
 func mapToVerification(data map[string]interface{}) *core.Verification {
 	verification := &core.Verification{}
-
 	if id, ok := data["id"].(string); ok {
 		verification.ID = id
 	}
 	if identifier, ok := data["identifier"].(string); ok {
 		verification.Identifier = identifier
 	}
-	if token, ok := data["token"].(string); ok {
-		verification.Token = token
-	}
-	if verifyType, ok := data["type"].(string); ok {
-		verification.Type = verifyType
+	if value, ok := data["value"].(string); ok {
+		verification.Value = value
 	}
 	if expiresAt, ok := data["expires_at"].(time.Time); ok {
 		verification.ExpiresAt = expiresAt
@@ -472,7 +568,9 @@ func mapToVerification(data map[string]interface{}) *core.Verification {
 	if createdAt, ok := data["created_at"].(time.Time); ok {
 		verification.CreatedAt = createdAt
 	}
-
+	if updatedAt, ok := data["updated_at"].(time.Time); ok {
+		verification.UpdatedAt = updatedAt
+	}
 	return verification
 }
 

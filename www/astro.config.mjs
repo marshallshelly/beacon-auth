@@ -44,11 +44,24 @@ export default defineConfig({
           ],
         },
         {
+          label: "Concepts",
+          items: [
+            {
+              label: "Database & Schema",
+              slug: "concepts/database",
+            },
+          ],
+        },
+        {
           label: "Guides",
           items: [
             {
               label: "Plugins System",
               slug: "guides/plugins",
+            },
+            {
+              label: "Role-Based Access Control",
+              slug: "guides/rbac",
             },
           ],
         },

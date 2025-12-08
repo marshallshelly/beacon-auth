@@ -5,6 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.0] - 2025-12-09
+
+### Added
+
+- **Roles & Permissions**: Added `Role` field to User struct for RBAC support.
+- **User Management**: Added `Banned`, `BanReason`, and `BanExpires` fields to User struct.
+- **Additional Fields**: Exposed `Metadata` field in User, Session, and Account structs to support arbitrary fields from database columns.
+- **Session**: Added `ImpersonatedBy` field for admin impersonation checks.
+
+### Changed
+
+- **Schema Update**: Renamed `Account` struct fields to match better-auth schema (`Provider` -> `ProviderID`, added `AccessTokenExpiresAt`).
+- **Schema Update**: Renamed `Verification` struct fields (`Token` -> `Value`, removed `Type`).
+
 ## [0.2.0] - 2025-12-08
 
 ### Added
@@ -110,7 +124,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Error handling system
 - Logging infrastructure
 
-[Unreleased]: https://github.com/marshallshelly/beacon-auth/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/marshallshelly/beacon-auth/compare/v0.3.0...HEAD
+[0.3.0]: https://github.com/marshallshelly/beacon-auth/compare/v0.2.1...v0.3.0
+[0.2.1]: https://github.com/marshallshelly/beacon-auth/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/marshallshelly/beacon-auth/compare/v0.1.3...v0.2.0
 [0.1.3]: https://github.com/marshallshelly/beacon-auth/compare/v0.1.2...v0.1.3
 [0.1.2]: https://github.com/marshallshelly/beacon-auth/compare/v0.1.0...v0.1.2
