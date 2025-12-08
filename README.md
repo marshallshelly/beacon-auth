@@ -72,21 +72,59 @@ func main() {
 
 ### Current Progress
 
+**Core Infrastructure:**
+
 - [x] Core infrastructure
 - [x] Configuration system
 - [x] Context management
 - [x] Error handling
-- [x] Adapter system (Memory, PostgreSQL)
-- [x] Session management (Multi-layer: Cookie, Redis, Database)
+- [x] Logging system
+
+**Data Layer:**
+
+- [x] Adapter system with automatic type transformations
+- [x] Memory adapter (for testing)
+- [x] PostgreSQL adapter
+- [x] MongoDB adapter
+- [ ] MySQL adapter
+- [ ] SQLite adapter
+
+**Session Management:**
+
+- [x] Multi-layer session management (Cookie, Redis, Database)
+- [x] Session strategies (Redis-first, DB-first, Cookie-only, etc.)
+- [x] Automatic TTL and cleanup
+- [x] Session middleware
+
+**Authentication:**
+
 - [x] Password hashing (Argon2id)
 - [x] Secure token generation
 - [x] Email/Password authentication handlers
-- [x] Framework integrations (Fiber with multi-tenant support)
-- [ ] OAuth providers
-- [ ] Additional plugins (2FA, magic link, etc.)
-- [ ] Additional framework integrations (Chi, Gin, Echo)
-- [ ] Additional database adapters (MySQL, MongoDB, SQLite)
-- [ ] Documentation website
+
+**Plugins:**
+
+- [x] Plugin system foundation
+- [x] OAuth plugin (GitHub provider implemented)
+- [x] Email/Password plugin
+- [x] Two-Factor Authentication (TOTP + backup codes)
+- [ ] Magic link plugin
+- [ ] Passkey/WebAuthn plugin
+- [ ] Additional OAuth providers (Google, Discord, Apple, etc.)
+
+**Framework Integrations:**
+
+- [x] Fiber (with multi-tenant support)
+- [ ] Chi
+- [ ] Gin
+- [ ] Echo
+- [ ] Standard net/http
+
+**Documentation:**
+
+- [x] Comprehensive inline documentation
+- [x] Example code and tests
+- [ ] Documentation website (in progress)
 
 ## Architecture
 

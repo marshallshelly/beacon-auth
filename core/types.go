@@ -6,14 +6,15 @@ import (
 
 // User represents an authenticated user
 type User struct {
-	ID            string                 `json:"id"`
-	Email         string                 `json:"email"`
-	EmailVerified bool                   `json:"emailVerified"`
-	Name          string                 `json:"name,omitempty"`
-	Image         string                 `json:"image,omitempty"`
-	CreatedAt     time.Time              `json:"createdAt"`
-	UpdatedAt     time.Time              `json:"updatedAt"`
-	Fields        map[string]interface{} `json:"-"` // Custom fields from plugins
+	ID               string                 `json:"id"`
+	Email            string                 `json:"email"`
+	EmailVerified    bool                   `json:"emailVerified"`
+	Name             string                 `json:"name,omitempty"`
+	Image            string                 `json:"image,omitempty"`
+	TwoFactorEnabled bool                   `json:"twoFactorEnabled"`
+	CreatedAt        time.Time              `json:"createdAt"`
+	UpdatedAt        time.Time              `json:"updatedAt"`
+	Fields           map[string]interface{} `json:"-"` // Custom fields from plugins
 }
 
 // Session represents a user session
