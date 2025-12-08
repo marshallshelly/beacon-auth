@@ -86,6 +86,25 @@ discordProvider := providers.NewDiscord(&providers.DiscordOptions{
 })
 ```
 
+#### Apple
+
+- JWT client secret generation (ES256)
+- ID token based user info (no userinfo endpoint)
+- Private email relay support
+- Refresh token support
+- Public key verification (JWKS)
+
+```go
+appleProvider := providers.NewApple(&providers.AppleOptions{
+    ClientID:   "your-service-id",
+    TeamID:     "your-team-id",
+    KeyID:      "your-key-id",
+    PrivateKey: "-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----",
+    // Or provide pre-generated client secret:
+    // ClientSecret: "your-generated-jwt-secret",
+})
+```
+
 **Usage:**
 
 ```go
@@ -97,7 +116,7 @@ import (
 auth, _ := beaconauth.New(
     beaconauth.WithAdapter(adapter),
     beaconauth.WithPlugins(
-        oauth.New(githubProvider, googleProvider, discordProvider),
+        oauth.New(githubProvider, googleProvider, discordProvider, appleProvider),
     ),
 )
 ```

@@ -173,13 +173,21 @@ discordProvider := providers.NewDiscord(&providers.DiscordOptions{
     Prompt:       "none", // or "consent"
 })
 
+// Apple (Sign in with Apple)
+appleProvider := providers.NewApple(&providers.AppleOptions{
+    ClientID:   "your-service-id",
+    TeamID:     "your-team-id",
+    KeyID:      "your-key-id",
+    PrivateKey: "-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----",
+})
+
 // Add to BeaconAuth
 auth, _ := beaconauth.New(
     beaconauth.WithAdapter(adapter),
     beaconauth.WithSecret("your-secret"),
     beaconauth.WithBaseURL("http://localhost:3000"),
     beaconauth.WithPlugins(
-        oauth.New(githubProvider, googleProvider, discordProvider),
+        oauth.New(githubProvider, googleProvider, discordProvider, appleProvider),
         emailpassword.New(),
         twofa.New(),
     ),

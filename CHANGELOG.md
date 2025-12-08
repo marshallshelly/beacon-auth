@@ -5,6 +5,25 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.0] - 2025-12-08
+
+### Added
+
+- **Apple OAuth Provider**: Complete Sign in with Apple implementation
+  - JWT client secret generation using ES256
+  - ID token based authentication (Apple doesn't have userinfo endpoint)
+  - Private email relay support
+  - Refresh token support
+  - Public key verification (JWKS)
+  - Team ID, Key ID, and Private Key configuration
+
+### Documentation
+
+- Updated all provider documentation with Apple examples
+- Added Apple configuration to quickstart guide
+- Updated OAuth provider reference documentation
+- All provider count updated from 3 to 4 providers
+
 ## [0.1.3] - 2025-12-08
 
 ### Added
@@ -84,7 +103,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Error handling system
 - Logging infrastructure
 
-[Unreleased]: https://github.com/marshallshelly/beacon-auth/compare/v0.1.3...HEAD
+[Unreleased]: https://github.com/marshallshelly/beacon-auth/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/marshallshelly/beacon-auth/compare/v0.1.3...v0.2.0
 [0.1.3]: https://github.com/marshallshelly/beacon-auth/compare/v0.1.2...v0.1.3
 [0.1.2]: https://github.com/marshallshelly/beacon-auth/compare/v0.1.0...v0.1.2
 [0.1.0]: https://github.com/marshallshelly/beacon-auth/releases/tag/v0.1.0

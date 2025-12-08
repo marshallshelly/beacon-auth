@@ -146,12 +146,12 @@ auth, _ := beaconauth.New(
 **Plugins:**
 
 - [x] Plugin system foundation
-- [x] OAuth plugin (3 providers: GitHub, Google, Discord)
+- [x] OAuth plugin (4 providers: GitHub, Google, Discord, Apple)
 - [x] Email/Password plugin
 - [x] Two-Factor Authentication (TOTP + backup codes)
 - [ ] Magic link plugin
 - [ ] Passkey/WebAuthn plugin
-- [ ] Additional OAuth providers (Apple, Microsoft, Twitter, Facebook, etc.)
+- [ ] Additional OAuth providers (Microsoft, Twitter, Facebook, etc.)
 
 **Framework Integrations:**
 

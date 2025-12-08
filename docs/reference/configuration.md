@@ -148,6 +148,19 @@ discordProvider := providers.NewDiscord(&providers.DiscordOptions{
 })
 ```
 
+### Apple
+
+```go
+appleProvider := providers.NewApple(&providers.AppleOptions{
+    ClientID:   os.Getenv("APPLE_SERVICE_ID"),
+    TeamID:     os.Getenv("APPLE_TEAM_ID"),
+    KeyID:      os.Getenv("APPLE_KEY_ID"),
+    PrivateKey: os.Getenv("APPLE_PRIVATE_KEY"), // PEM format EC private key
+    // Or use pre-generated client secret:
+    // ClientSecret: os.Getenv("APPLE_CLIENT_SECRET"),
+})
+```
+
 ### Register with BeaconAuth
 
 ```go
@@ -156,7 +169,7 @@ import "github.com/marshallshelly/beacon-auth/plugins/oauth"
 auth, _ := beaconauth.New(
     beaconauth.WithAdapter(adapter),
     beaconauth.WithPlugins(
-        oauth.New(githubProvider, googleProvider, discordProvider),
+        oauth.New(githubProvider, googleProvider, discordProvider, appleProvider),
     ),
 )
 ```
