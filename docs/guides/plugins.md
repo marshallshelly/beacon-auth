@@ -19,35 +19,90 @@ Included in `github.com/marshallshelly/beacon-auth/plugins/emailpassword`.
 
 ### 2. Two-Factor Authentication (`twofa`)
 
-Provides TOTP-based 2FA (compatible with Google Authenticator).
+Provides TOTP-based 2FA (compatible with Google Authenticator) with backup codes.
 Included in `github.com/marshallshelly/beacon-auth/plugins/twofa`.
 
 **Prerequisites:**
 
-- Database must have `two_factors` table (see [getting started](../getting-started/quickstart/)).
+- Database must have `two_factors` and `two_factor_backup_codes` tables (see [getting started](../getting-started/quickstart/)).
 - User model requires `two_factor_enabled` boolean.
 
 **Endpoints Added:**
 
-- `POST /auth/2fa/generate`: Generate a secret and QR code URI.
+- `POST /auth/2fa/generate`: Generate a secret, QR code URI, and backup codes.
 - `POST /auth/2fa/enable`: Verify code and enable 2FA.
-- `POST /auth/2fa/verify`: Verify a TOTP code during login flows.
-- `POST /auth/2fa/disable`: Disable 2FA.
+- `POST /auth/2fa/verify`: Verify a TOTP code or backup code during login flows.
+- `POST /auth/2fa/disable`: Disable 2FA and remove secrets.
 
 ### 3. OAuth (`oauth`)
 
-Support for Social Login (GitHub, etc.).
+Support for Social Login with multiple providers.
 Included in `github.com/marshallshelly/beacon-auth/plugins/oauth`.
+
+**Available Providers:**
+
+#### GitHub
+
+- Email verification status tracking
+- Primary email detection
+- Standard OAuth 2.0 flow
+
+```go
+import "github.com/marshallshelly/beacon-auth/plugins/oauth/providers"
+
+githubProvider := providers.NewGitHub(
+    "your-client-id",
+    "your-client-secret",
+    []string{"user:email"}, // scopes
+)
+```
+
+#### Google
+
+- PKCE (Proof Key for Code Exchange) support
+- ID token handling
+- Refresh token support (with `AccessType: "offline"`)
+
+```go
+googleProvider := providers.NewGoogle(&providers.GoogleOptions{
+    ClientID:     "your-client-id",
+    ClientSecret: "your-client-secret",
+    AccessType:   "offline", // For refresh tokens
+})
+```
+
+#### Discord
+
+- Custom and default avatar URL generation
+- Support for old discriminator and new username systems
+- Animated avatar detection (GIF vs PNG)
+- Refresh token support
+
+```go
+discordProvider := providers.NewDiscord(&providers.DiscordOptions{
+    ClientID:     "your-client-id",
+    ClientSecret: "your-client-secret",
+    Prompt:       "none", // or "consent"
+})
+```
 
 **Usage:**
 
 ```go
-oauth.New(
-    github.NewProvider(os.Getenv("GITHUB_ID"), os.Getenv("GITHUB_SECRET")),
+import (
+    "github.com/marshallshelly/beacon-auth/plugins/oauth"
+    "github.com/marshallshelly/beacon-auth/plugins/oauth/providers"
+)
+
+auth, _ := beaconauth.New(
+    beaconauth.WithAdapter(adapter),
+    beaconauth.WithPlugins(
+        oauth.New(githubProvider, googleProvider, discordProvider),
+    ),
 )
 ```
 
 **Endpoints Added:**
 
-- `GET /auth/oauth/{provider}/login`: Redirect to provider.
-- `GET /auth/oauth/{provider}/callback`: Handle callback.
+- `GET /auth/oauth/{provider}/login`: Redirect to provider (e.g., `/auth/oauth/github/login`).
+- `GET /auth/oauth/{provider}/callback`: Handle callback (e.g., `/auth/oauth/github/callback`).

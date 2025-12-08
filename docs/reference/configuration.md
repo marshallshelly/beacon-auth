@@ -78,36 +78,85 @@ beaconauth.New(
 
 BeaconAuth supports pluggable adapters. Currently available:
 
-- `adapters/postgres` (pgx)
-- `adapters/mongodb` (mongo-driver)
+- **Memory Adapter** (`adapters/memory`) - For testing and development
+- **PostgreSQL** (`adapters/postgres`) - Production-ready with pgx driver
+- **MongoDB** (`adapters/mongodb`) - Production-ready with mongo-driver
 
 Initialize adapters:
 
 ```go
 // PostgreSQL
-pg, err := postgres.New(context.Background(), &postgres.Config{ /*...*/ })
+import "github.com/marshallshelly/beacon-auth/adapters/postgres"
+
+pg, err := postgres.New(context.Background(), &postgres.Config{
+    Host:     "localhost",
+    Port:     5432,
+    Database: "auth",
+    Username: "postgres",
+    Password: "postgres",
+})
 
 // MongoDB
-uri := os.Getenv("MONGODB_URI")
-docs := "www.mongodb.com/docs/drivers/go/current/"
-if uri == "" {
-    log.Fatal("Set your 'MONGODB_URI' environment variable. " +
-        "See: " + docs +
-        "usage-examples/#environment-variable")
-}
-client, err := mongo.Connect(options.Client().ApplyURI(uri))
-if err != nil { panic(err) }
-defer func() { if err := client.Disconnect(context.TODO()); err != nil { panic(err) } }()
+import "github.com/marshallshelly/beacon-auth/adapters/mongodb"
+
+mongo, err := mongodb.New(context.Background(), &mongodb.Config{
+    URI:      "mongodb://localhost:27017",
+    Database: "auth",
+})
+
+// Memory (for testing)
+import "github.com/marshallshelly/beacon-auth/adapters/memory"
+
+mem := memory.New()
 ```
 
 ## OAuth Providers
 
-Register providers via:
+BeaconAuth includes three OAuth providers out of the box.
+
+### GitHub
 
 ```go
-beaconauth.New(
-    beaconauth.WithOAuthProviders(
-        github.NewProvider(os.Getenv("GITHUB_ID"), os.Getenv("GITHUB_SECRET")),
+import "github.com/marshallshelly/beacon-auth/plugins/oauth/providers"
+
+githubProvider := providers.NewGitHub(
+    os.Getenv("GITHUB_CLIENT_ID"),
+    os.Getenv("GITHUB_CLIENT_SECRET"),
+    []string{"user:email"},
+)
+```
+
+### Google (with PKCE)
+
+```go
+googleProvider := providers.NewGoogle(&providers.GoogleOptions{
+    ClientID:     os.Getenv("GOOGLE_CLIENT_ID"),
+    ClientSecret: os.Getenv("GOOGLE_CLIENT_SECRET"),
+    AccessType:   "offline", // Request refresh token
+    Scopes:       []string{"openid", "email", "profile"}, // Optional, these are defaults
+})
+```
+
+### Discord
+
+```go
+discordProvider := providers.NewDiscord(&providers.DiscordOptions{
+    ClientID:     os.Getenv("DISCORD_CLIENT_ID"),
+    ClientSecret: os.Getenv("DISCORD_CLIENT_SECRET"),
+    Prompt:       "none", // or "consent"
+    Scopes:       []string{"identify", "email"}, // Optional, these are defaults
+})
+```
+
+### Register with BeaconAuth
+
+```go
+import "github.com/marshallshelly/beacon-auth/plugins/oauth"
+
+auth, _ := beaconauth.New(
+    beaconauth.WithAdapter(adapter),
+    beaconauth.WithPlugins(
+        oauth.New(githubProvider, googleProvider, discordProvider),
     ),
 )
 ```
