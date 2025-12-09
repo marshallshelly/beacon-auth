@@ -212,7 +212,7 @@ auth, _ := beaconauth.New(
 
 - [x] Comprehensive inline documentation
 - [x] Example code and tests
-- [ ] Documentation website (in progress)
+- [x] Documentation website (beaconauth.dev)
 
 ## Architecture
 
