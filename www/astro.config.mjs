@@ -72,6 +72,26 @@ export default defineConfig({
               label: "Fiber",
               slug: "integrations/fiber",
             },
+            {
+              label: "Standard net/http",
+              slug: "integrations/http",
+            },
+            {
+              label: "Chi",
+              slug: "integrations/chi",
+            },
+            {
+              label: "Gin",
+              slug: "integrations/gin",
+            },
+            {
+              label: "Echo",
+              slug: "integrations/echo",
+            },
+            {
+              label: "Gorilla Mux",
+              slug: "integrations/mux",
+            },
           ],
         },
         {

@@ -201,10 +201,10 @@ auth, _ := beaconauth.New(
 **Framework Integrations:**
 
 - [x] Fiber (with multi-tenant support)
-- [ ] Chi
-- [ ] Gin
-- [ ] Echo
-- [ ] Standard net/http
+- [x] Chi
+- [x] Gin
+- [x] Echo
+- [x] Standard net/http
 
 **Documentation:**
 

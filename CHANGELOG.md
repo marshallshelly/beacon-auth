@@ -5,6 +5,25 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.0] - 2025-12-09
+
+### Added
+
+- **Framework Integrations**: Added comprehensive integrations for popular Go web frameworks:
+
+  - **Standard net/http**: Native `http.Handler` support compatible with standard mux.
+  - **Chi**: Native middleware and route registration for `go-chi/chi`.
+  - **Gin**: Native middleware and helpers for `gin-gonic/gin`.
+  - **Echo**: Native middleware and utilities for `labstack/echo`.
+  - **Gorilla Mux**: Native support for `gorilla/mux` router.
+  - All integrations include support for:
+    - Session management middleware
+    - Authentication helpers (`GetUser`, `GetSession`)
+    - Multi-tenant path/header extraction
+    - User/Session keys in context
+
+- **Documentation**: Added dedicated documentation guides for all new integrations.
+
 ## [0.3.0] - 2025-12-09
 
 ### Added
