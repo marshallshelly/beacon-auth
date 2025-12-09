@@ -209,7 +209,7 @@ func create(ctx context.Context, db queryExecuter, model string, data map[string
 	if err != nil {
 		return nil, err
 	}
-	defer rows.Close()
+	defer func() { _ = rows.Close() }()
 
 	if !rows.Next() {
 		return nil, fmt.Errorf("no rows returned from insert")
@@ -228,7 +228,7 @@ func findOne(ctx context.Context, db queryExecuter, query *core.Query) (map[stri
 	if err != nil {
 		return nil, err
 	}
-	defer rows.Close()
+	defer func() { _ = rows.Close() }()
 
 	if !rows.Next() {
 		return nil, nil
@@ -247,7 +247,7 @@ func findMany(ctx context.Context, db queryExecuter, query *core.Query) ([]map[s
 	if err != nil {
 		return nil, err
 	}
-	defer rows.Close()
+	defer func() { _ = rows.Close() }()
 
 	results := make([]map[string]interface{}, 0)
 	for rows.Next() {
@@ -297,7 +297,7 @@ func update(ctx context.Context, db queryExecuter, query *core.Query, data map[s
 	if err != nil {
 		return nil, err
 	}
-	defer rows.Close()
+	defer func() { _ = rows.Close() }()
 
 	if !rows.Next() {
 		return nil, nil

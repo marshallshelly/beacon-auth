@@ -252,7 +252,7 @@ func findOne(ctx context.Context, db queryExecuter, query *core.Query) (map[stri
 	if err != nil {
 		return nil, err
 	}
-	defer rows.Close()
+	defer func() { _ = rows.Close() }()
 
 	if !rows.Next() {
 		return nil, nil
@@ -271,7 +271,7 @@ func findMany(ctx context.Context, db queryExecuter, query *core.Query) ([]map[s
 	if err != nil {
 		return nil, err
 	}
-	defer rows.Close()
+	defer func() { _ = rows.Close() }()
 
 	results := make([]map[string]interface{}, 0)
 	for rows.Next() {

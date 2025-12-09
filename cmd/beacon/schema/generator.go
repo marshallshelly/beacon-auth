@@ -79,17 +79,14 @@ func generatePlugin(plugin string, cfg *Config) (string, error) {
 
 func generatePostgresCore(idType string) string {
 	idDef := "VARCHAR(255) PRIMARY KEY"
-	if idType == "uuid" {
-		idDef = "UUID PRIMARY KEY DEFAULT gen_random_uuid()"
-	} else if idType == "serial" {
-		idDef = "SERIAL PRIMARY KEY"
-	}
-
-	// For references, if ID is serial (int), foreign keys must be int
 	fkDef := "VARCHAR(255)"
-	if idType == "uuid" {
+
+	switch idType {
+	case "uuid":
+		idDef = "UUID PRIMARY KEY DEFAULT gen_random_uuid()"
 		fkDef = "UUID"
-	} else if idType == "serial" {
+	case "serial":
+		idDef = "SERIAL PRIMARY KEY"
 		fkDef = "INTEGER"
 	}
 
@@ -152,17 +149,14 @@ CREATE TABLE IF NOT EXISTS verifications (
 
 func generatePostgresTwoFA(idType string) string {
 	idDef := "VARCHAR(255) PRIMARY KEY"
-	if idType == "uuid" {
-		idDef = "UUID PRIMARY KEY DEFAULT gen_random_uuid()"
-	} else if idType == "serial" {
-		idDef = "SERIAL PRIMARY KEY"
-	}
-
-	// For references
 	fkDef := "VARCHAR(255)"
-	if idType == "uuid" {
+
+	switch idType {
+	case "uuid":
+		idDef = "UUID PRIMARY KEY DEFAULT gen_random_uuid()"
 		fkDef = "UUID"
-	} else if idType == "serial" {
+	case "serial":
+		idDef = "SERIAL PRIMARY KEY"
 		fkDef = "INTEGER"
 	}
 
@@ -187,16 +181,14 @@ CREATE TABLE IF NOT EXISTS two_factor_backup_codes (
 
 func generateMySQLCore(idType string) string {
 	idDef := "VARCHAR(255) PRIMARY KEY"
-	if idType == "uuid" {
-		idDef = "CHAR(36) PRIMARY KEY"
-	} else if idType == "serial" {
-		idDef = "INT AUTO_INCREMENT PRIMARY KEY"
-	}
-
 	fkDef := "VARCHAR(255)"
-	if idType == "uuid" {
+
+	switch idType {
+	case "uuid":
+		idDef = "CHAR(36) PRIMARY KEY"
 		fkDef = "CHAR(36)"
-	} else if idType == "serial" {
+	case "serial":
+		idDef = "INT AUTO_INCREMENT PRIMARY KEY"
 		fkDef = "INT"
 	}
 
@@ -261,16 +253,14 @@ CREATE TABLE IF NOT EXISTS verifications (
 
 func generateMySQLTwoFA(idType string) string {
 	idDef := "VARCHAR(255) PRIMARY KEY"
-	if idType == "uuid" {
-		idDef = "CHAR(36) PRIMARY KEY"
-	} else if idType == "serial" {
-		idDef = "INT AUTO_INCREMENT PRIMARY KEY"
-	}
-
 	fkDef := "VARCHAR(255)"
-	if idType == "uuid" {
+
+	switch idType {
+	case "uuid":
+		idDef = "CHAR(36) PRIMARY KEY"
 		fkDef = "CHAR(36)"
-	} else if idType == "serial" {
+	case "serial":
+		idDef = "INT AUTO_INCREMENT PRIMARY KEY"
 		fkDef = "INT"
 	}
 
@@ -298,12 +288,10 @@ CREATE TABLE IF NOT EXISTS two_factor_backup_codes (
 func generateSQLiteCore(idType string) string {
 	// SQLite is simpler, usually INTEGER PRIMARY KEY implies AUTOINCREMENT
 	idDef := "TEXT PRIMARY KEY"
+	fkDef := "TEXT"
+
 	if idType == "serial" {
 		idDef = "INTEGER PRIMARY KEY AUTOINCREMENT"
-	}
-
-	fkDef := "TEXT"
-	if idType == "serial" {
 		fkDef = "INTEGER"
 	}
 
@@ -368,12 +356,10 @@ CREATE TABLE IF NOT EXISTS verifications (
 
 func generateSQLiteTwoFA(idType string) string {
 	idDef := "TEXT PRIMARY KEY"
+	fkDef := "TEXT"
+
 	if idType == "serial" {
 		idDef = "INTEGER PRIMARY KEY AUTOINCREMENT"
-	}
-
-	fkDef := "TEXT"
-	if idType == "serial" {
 		fkDef = "INTEGER"
 	}
 
@@ -400,16 +386,14 @@ CREATE TABLE IF NOT EXISTS two_factor_backup_codes (
 
 func generateMSSQLCore(idType string) string {
 	idDef := "NVARCHAR(255) PRIMARY KEY"
-	if idType == "uuid" {
-		idDef = "UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID()"
-	} else if idType == "serial" {
-		idDef = "INT IDENTITY(1,1) PRIMARY KEY"
-	}
-
 	fkDef := "NVARCHAR(255)"
-	if idType == "uuid" {
+
+	switch idType {
+	case "uuid":
+		idDef = "UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID()"
 		fkDef = "UNIQUEIDENTIFIER"
-	} else if idType == "serial" {
+	case "serial":
+		idDef = "INT IDENTITY(1,1) PRIMARY KEY"
 		fkDef = "INT"
 	}
 
@@ -478,16 +462,14 @@ CREATE TABLE verifications (
 
 func generateMSSQLTwoFA(idType string) string {
 	idDef := "NVARCHAR(255) PRIMARY KEY"
-	if idType == "uuid" {
-		idDef = "UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID()"
-	} else if idType == "serial" {
-		idDef = "INT IDENTITY(1,1) PRIMARY KEY"
-	}
-
 	fkDef := "NVARCHAR(255)"
-	if idType == "uuid" {
+
+	switch idType {
+	case "uuid":
+		idDef = "UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID()"
 		fkDef = "UNIQUEIDENTIFIER"
-	} else if idType == "serial" {
+	case "serial":
+		idDef = "INT IDENTITY(1,1) PRIMARY KEY"
 		fkDef = "INT"
 	}
 

@@ -30,7 +30,7 @@ func main() {
 }
 
 func printUsage() {
-	fmt.Println(`BeaconAuth CLI
+	fmt.Print(`BeaconAuth CLI
 
 Usage:
   beacon <command> [flags]
@@ -62,7 +62,10 @@ func handleGenerate(args []string) {
 	plugins := generateCmd.String("plugins", "", "Comma-separated list of plugins")
 	idType := generateCmd.String("id-type", "string", "ID generation strategy (string, uuid, serial)")
 
-	generateCmd.Parse(args)
+	if err := generateCmd.Parse(args); err != nil {
+		fmt.Printf("Error parsing flags: %v\n", err)
+		os.Exit(1)
+	}
 
 	if *adapter == "" {
 		fmt.Println("Error: --adapter is required")

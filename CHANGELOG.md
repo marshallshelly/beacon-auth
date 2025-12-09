@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.6.1] - 2025-12-09
+
+### Fixed
+
+- **Adapter Stability**: Fixed unchecked error returns (`rows.Close()`) in MySQL, MSSQL, and SQLite adapters to prevent potential resource leaks.
+- **CLI Cleanliness**: Fixed static analysis warnings in the schema generator and CLI entry point.
+- **Configuration**: Updated `InternalAdapter` instantiation to correctly pass configuration map (fixes `nil` pointer issues in some contexts).
+
 ## [0.6.0] - 2025-12-09
 
 ### Added

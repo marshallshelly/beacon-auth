@@ -16,7 +16,7 @@ type DBStore struct {
 // NewDBStore creates a new database session store
 func NewDBStore(coreAdapter core.Adapter) *DBStore {
 	return &DBStore{
-		internal: adapter.NewInternalAdapter(coreAdapter),
+		internal: adapter.NewInternalAdapter(coreAdapter, nil),
 	}
 }
 

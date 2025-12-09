@@ -39,7 +39,7 @@ func NewHandler(dbAdapter core.Adapter, sessionManager *session.Manager, config 
 	}
 
 	return &Handler{
-		internal:       adapter.NewInternalAdapter(dbAdapter),
+		internal:       adapter.NewInternalAdapter(dbAdapter, nil),
 		sessionManager: sessionManager,
 		hasher:         crypto.NewArgon2Hasher(),
 		config:         config,

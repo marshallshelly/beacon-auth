@@ -64,7 +64,7 @@ func New(opts ...Option) (Auth, error) {
 	// Add default factory configuration
 	factoryOpt := func(c *core.Config) error {
 		c.DataManagerFactory = func(adapterInstance core.Adapter) core.DataManager {
-			return adapter.NewInternalAdapter(adapterInstance)
+			return adapter.NewInternalAdapter(adapterInstance, nil)
 		}
 
 		c.PasswordHasherFactory = func() core.PasswordHasher {
