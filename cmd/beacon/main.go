@@ -43,6 +43,7 @@ Generate Flags:
   --adapter   Database adapter (postgres, mysql, sqlite, mssql) [required]
   --plugins   Comma-separated list of plugins (e.g., twofa,oauth)
   --id-type   ID generation strategy (string, uuid, serial) [default: string]
+  --output    Output file path (optional, defaults to stdout)
 
 Examples:
   beacon generate --adapter postgres --plugins twofa --id-type uuid
@@ -61,6 +62,7 @@ func handleGenerate(args []string) {
 	adapter := generateCmd.String("adapter", "", "Database adapter (postgres, mysql, sqlite, mssql)")
 	plugins := generateCmd.String("plugins", "", "Comma-separated list of plugins")
 	idType := generateCmd.String("id-type", "string", "ID generation strategy (string, uuid, serial)")
+	output := generateCmd.String("output", "", "Output file path")
 
 	if err := generateCmd.Parse(args); err != nil {
 		fmt.Printf("Error parsing flags: %v\n", err)
@@ -105,5 +107,13 @@ func handleGenerate(args []string) {
 		os.Exit(1)
 	}
 
-	fmt.Println(sql)
+	if *output != "" {
+		if err := os.WriteFile(*output, []byte(sql), 0644); err != nil {
+			fmt.Printf("Error writing to file: %v\n", err)
+			os.Exit(1)
+		}
+		fmt.Printf("Schema written to %s\n", *output)
+	} else {
+		fmt.Println(sql)
+	}
 }
