@@ -66,6 +66,23 @@ export default defineConfig({
           ],
         },
         {
+          label: "Adapters",
+          items: [
+            {
+              label: "MySQL",
+              slug: "adapters/mysql",
+            },
+            {
+              label: "SQLite",
+              slug: "adapters/sqlite",
+            },
+            {
+              label: "MSSQL",
+              slug: "adapters/mssql",
+            },
+          ],
+        },
+        {
           label: "Integrations",
           items: [
             {

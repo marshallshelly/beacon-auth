@@ -172,8 +172,9 @@ auth, _ := beaconauth.New(
 - [x] Memory adapter (for testing)
 - [x] PostgreSQL adapter
 - [x] MongoDB adapter
-- [ ] MySQL adapter
-- [ ] SQLite adapter
+- [x] MySQL adapter
+- [x] SQLite adapter
+- [x] MSSQL adapter
 
 **Session Management:**
 

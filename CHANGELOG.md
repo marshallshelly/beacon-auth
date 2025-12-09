@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Database Adapters**: Added production-ready adapters for:
+
+  - **MySQL**: Native `database/sql` implementation.
+  - **SQLite**: Pure Go implementation using `modernc.org/sqlite`.
+  - **MSSQL**: Native SQL Server implementation using `microsoft/go-mssqldb` with support for `OUTPUT` and pagination.
+
 - **Framework Integrations**: Added comprehensive integrations for popular Go web frameworks:
 
   - **Standard net/http**: Native `http.Handler` support compatible with standard mux.

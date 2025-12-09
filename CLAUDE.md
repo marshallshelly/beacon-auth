@@ -631,6 +631,9 @@ Re-exports core types and functions. Users import `github.com/marshallshelly/bea
 - `adapter/` - Adapter factory, internal adapter, and test suite
 - `adapters/memory/` - In-memory adapter for testing
 - `adapters/postgres/` - PostgreSQL adapter with pgx
+- `adapters/mysql/` - MySQL adapter with go-sql-driver
+- `adapters/sqlite/` - SQLite adapter (pure Go) with modernc.org/sqlite
+- `adapters/mssql/` - MSSQL adapter with microsoft/go-mssqldb
 
 **Session directory** (Phase 3 complete):
 
