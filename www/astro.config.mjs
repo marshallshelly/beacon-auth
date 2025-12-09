@@ -56,12 +56,25 @@ export default defineConfig({
           label: "Guides",
           items: [
             {
-              label: "Plugins System",
-              slug: "guides/plugins",
-            },
-            {
               label: "Role-Based Access Control",
               slug: "guides/rbac",
+            },
+          ],
+        },
+        {
+          label: "Plugins",
+          items: [
+            {
+              label: "Email & Password",
+              slug: "plugins/email-password",
+            },
+            {
+              label: "OAuth (Google, GitHub)",
+              slug: "plugins/oauth",
+            },
+            {
+              label: "Two-Factor Auth",
+              slug: "plugins/twofa",
             },
           ],
         },
