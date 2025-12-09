@@ -1,5 +1,11 @@
 # BeaconAuth
 
+[![Go Reference](https://pkg.go.dev/badge/github.com/marshallshelly/beacon-auth.svg)](https://pkg.go.dev/github.com/marshallshelly/beacon-auth)
+[![Go Report Card](https://goreportcard.com/badge/github.com/marshallshelly/beacon-auth)](https://goreportcard.com/report/github.com/marshallshelly/beacon-auth)
+[![CI](https://github.com/marshallshelly/beacon-auth/actions/workflows/ci.yml/badge.svg)](https://github.com/marshallshelly/beacon-auth/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Release](https://img.shields.io/github/v/release/marshallshelly/beacon-auth.svg)](https://github.com/marshallshelly/beacon-auth/releases)
+
 A modular, plugin-based authentication library for Go with support for multiple databases, OAuth providers, and web frameworks.
 
 ## Features
