@@ -50,6 +50,10 @@ export default defineConfig({
               label: "Database & Schema",
               slug: "concepts/database",
             },
+            {
+              label: "CLI Tool",
+              slug: "concepts/cli",
+            },
           ],
         },
         {

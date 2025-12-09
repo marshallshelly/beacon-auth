@@ -4,14 +4,31 @@ import (
 	"context"
 	"crypto/rand"
 	"encoding/base64"
+	"strconv"
 	"time"
 
 	"github.com/marshallshelly/beacon-auth/core"
 )
 
+// IDStrategy defines how IDs are generated
+type IDStrategy string
+
+const (
+	// IDStrategyApplication generates unique string IDs in the application (default)
+	IDStrategyApplication IDStrategy = "application"
+	// IDStrategyDatabase defers ID generation to the database (UUID or Serial)
+	IDStrategyDatabase IDStrategy = "database"
+)
+
 // InternalAdapter provides high-level database operations
 type InternalAdapter struct {
-	adapter core.Adapter
+	adapter    core.Adapter
+	idStrategy IDStrategy
+}
+
+// InternalAdapterConfig configuration for InternalAdapter
+type InternalAdapterConfig struct {
+	IDStrategy IDStrategy
 }
 
 // Adapter returns the underlying adapter
@@ -20,20 +37,39 @@ func (ia *InternalAdapter) Adapter() core.Adapter {
 }
 
 // NewInternalAdapter creates a new internal adapter
-func NewInternalAdapter(adapter core.Adapter) *InternalAdapter {
-	return &InternalAdapter{adapter: adapter}
+func NewInternalAdapter(adapter core.Adapter, config *InternalAdapterConfig) *InternalAdapter {
+	strategy := IDStrategyApplication
+	if config != nil && config.IDStrategy != "" {
+		strategy = config.IDStrategy
+	}
+	return &InternalAdapter{
+		adapter:    adapter,
+		idStrategy: strategy,
+	}
+}
+
+// generateID returns a new ID if using Application strategy, or nil if Database strategy
+func (ia *InternalAdapter) generateID() interface{} {
+	if ia.idStrategy == IDStrategyDatabase {
+		return nil // Let the DB handle it
+	}
+	// Application strategy
+	return generateRandomStringID()
 }
 
 // CreateUser creates a new user
 func (ia *InternalAdapter) CreateUser(ctx context.Context, email, name string) (*core.User, error) {
 	now := time.Now()
 	data := map[string]interface{}{
-		"id":             generateID(),
 		"email":          email,
 		"name":           name,
 		"email_verified": false,
 		"created_at":     now,
 		"updated_at":     now,
+	}
+
+	if id := ia.generateID(); id != nil {
+		data["id"] = id
 	}
 
 	result, err := ia.adapter.Create(ctx, "users", data)
@@ -121,12 +157,15 @@ func (ia *InternalAdapter) CreateSession(ctx context.Context, userID string, opt
 	}
 
 	data := map[string]interface{}{
-		"id":         generateID(),
 		"user_id":    userID,
 		"token":      token,
 		"expires_at": expiresAt,
 		"created_at": now,
 		"updated_at": now,
+	}
+
+	if id := ia.generateID(); id != nil {
+		data["id"] = id
 	}
 
 	if opts != nil {
@@ -216,13 +255,16 @@ func (ia *InternalAdapter) RevokeAllUserSessions(ctx context.Context, userID str
 func (ia *InternalAdapter) CreateAccount(ctx context.Context, userID, provider, accountID string) (*core.Account, error) {
 	now := time.Now()
 	data := map[string]interface{}{
-		"id":            generateID(),
 		"user_id":       userID,
 		"account_id":    accountID,
 		"provider_id":   provider,
 		"provider_type": "credential",
 		"created_at":    now,
 		"updated_at":    now,
+	}
+
+	if id := ia.generateID(); id != nil {
+		data["id"] = id
 	}
 
 	result, err := ia.adapter.Create(ctx, "accounts", data)
@@ -237,7 +279,6 @@ func (ia *InternalAdapter) CreateAccount(ctx context.Context, userID, provider, 
 func (ia *InternalAdapter) CreateOAuthAccount(ctx context.Context, userID, provider, accountID, accessToken, refreshToken string, expiresAt *time.Time) (*core.Account, error) {
 	now := time.Now()
 	data := map[string]interface{}{
-		"id":                      generateID(),
 		"user_id":                 userID,
 		"account_id":              accountID,
 		"provider_id":             provider,
@@ -247,6 +288,10 @@ func (ia *InternalAdapter) CreateOAuthAccount(ctx context.Context, userID, provi
 		"access_token_expires_at": expiresAt,
 		"created_at":              now,
 		"updated_at":              now,
+	}
+
+	if id := ia.generateID(); id != nil {
+		data["id"] = id
 	}
 
 	result, err := ia.adapter.Create(ctx, "accounts", data)
@@ -261,7 +306,6 @@ func (ia *InternalAdapter) CreateOAuthAccount(ctx context.Context, userID, provi
 func (ia *InternalAdapter) CreateCredentialAccount(ctx context.Context, userID, identifier, passwordHash string) (*core.Account, error) {
 	now := time.Now()
 	data := map[string]interface{}{
-		"id":            generateID(),
 		"user_id":       userID,
 		"account_id":    identifier,
 		"provider_id":   "local",
@@ -269,6 +313,10 @@ func (ia *InternalAdapter) CreateCredentialAccount(ctx context.Context, userID, 
 		"password":      passwordHash,
 		"created_at":    now,
 		"updated_at":    now,
+	}
+
+	if id := ia.generateID(); id != nil {
+		data["id"] = id
 	}
 
 	result, err := ia.adapter.Create(ctx, "accounts", data)
@@ -309,12 +357,15 @@ func (ia *InternalAdapter) CreateVerification(ctx context.Context, identifier, v
 
 	now := time.Now()
 	data := map[string]interface{}{
-		"id":         generateID(),
 		"identifier": identifier,
 		"token":      token,
 		"type":       verifyType,
 		"expires_at": now.Add(expiresIn),
 		"created_at": now,
+	}
+
+	if id := ia.generateID(); id != nil {
+		data["id"] = id
 	}
 
 	result, err := ia.adapter.Create(ctx, "verifications", data)
@@ -368,8 +419,8 @@ func mapToUser(data map[string]interface{}) *core.User {
 		"ban_expires":        true,
 	}
 
-	if id, ok := data["id"].(string); ok {
-		user.ID = id
+	if id, ok := data["id"]; ok {
+		user.ID = toString(id)
 	}
 	if email, ok := data["email"].(string); ok {
 		user.Email = email
@@ -434,11 +485,11 @@ func mapToSession(data map[string]interface{}) *core.Session {
 		"impersonated_by": true,
 	}
 
-	if id, ok := data["id"].(string); ok {
-		session.ID = id
+	if id, ok := data["id"]; ok {
+		session.ID = toString(id)
 	}
-	if userID, ok := data["user_id"].(string); ok {
-		session.UserID = userID
+	if userID, ok := data["user_id"]; ok {
+		session.UserID = toString(userID)
 	}
 	if token, ok := data["token"].(string); ok {
 		session.Token = token
@@ -493,11 +544,11 @@ func mapToAccount(data map[string]interface{}) *core.Account {
 		"updated_at":               true,
 	}
 
-	if id, ok := data["id"].(string); ok {
-		account.ID = id
+	if id, ok := data["id"]; ok {
+		account.ID = toString(id)
 	}
-	if userID, ok := data["user_id"].(string); ok {
-		account.UserID = userID
+	if userID, ok := data["user_id"]; ok {
+		account.UserID = toString(userID)
 	}
 	if accountID, ok := data["account_id"].(string); ok {
 		account.AccountID = accountID
@@ -553,8 +604,8 @@ func mapToAccount(data map[string]interface{}) *core.Account {
 
 func mapToVerification(data map[string]interface{}) *core.Verification {
 	verification := &core.Verification{}
-	if id, ok := data["id"].(string); ok {
-		verification.ID = id
+	if id, ok := data["id"]; ok {
+		verification.ID = toString(id)
 	}
 	if identifier, ok := data["identifier"].(string); ok {
 		verification.Identifier = identifier
@@ -574,7 +625,7 @@ func mapToVerification(data map[string]interface{}) *core.Verification {
 	return verification
 }
 
-func generateID() string {
+func generateRandomStringID() string {
 	b := make([]byte, 16)
 	if _, err := rand.Read(b); err != nil {
 		// Fallback to timestamp-based ID if random read fails
@@ -597,4 +648,25 @@ func generateVerificationToken() (string, error) {
 		return "", err
 	}
 	return base64.URLEncoding.EncodeToString(b), nil
+}
+
+// toString safely converts an interface{} (usually from DB) to a string
+func toString(v interface{}) string {
+	if v == nil {
+		return ""
+	}
+	switch val := v.(type) {
+	case string:
+		return val
+	case []byte:
+		return string(val)
+	case int:
+		return strconv.Itoa(val)
+	case int64:
+		return strconv.FormatInt(val, 10)
+	case float64:
+		return strconv.FormatFloat(val, 'f', -1, 64)
+	default:
+		return ""
+	}
 }

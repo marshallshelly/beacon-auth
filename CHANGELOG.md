@@ -5,6 +5,27 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.6.0] - 2025-12-09
+
+### Added
+
+- **BeaconAuth CLI**: New command-line tool (`cmd/beacon`) for easy setup and management.
+  - `beacon generate`: Automatically generates SQL schemas for your database and enabled plugins.
+  - Supports `postgres`, `mysql`, `sqlite`, and `mssql` adapters.
+- **Flexible ID Strategies**: Core adapters now support multiple ID generation strategies:
+  - `string`: Application-side random string IDs (default, CUID-like).
+  - `uuid`: Database-side UUID generation (e.g., `gen_random_uuid()`).
+  - `serial`: Database-side auto-incrementing integers.
+- **Documentation**:
+  - New **CLI Tool** guide in Concepts.
+  - Split Plugin documentation into dedicated pages (`email-password`, `twofa`, `oauth`).
+  - Updated **Quickstart** guide to recommend CLI-based schema generation.
+  - Updated website sidebar navigation.
+
+### Changed
+
+- **Internal Adapter**: Refactored `InternalAdapter` to accept configuration for `IDStrategy`, enabling native DB IDs.
+
 ## [0.5.0] - 2025-12-09
 
 ### Added

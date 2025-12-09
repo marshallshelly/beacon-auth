@@ -14,6 +14,7 @@ A modular, plugin-based authentication library for Go with support for multiple 
 - 🗄️ **Database Agnostic** - PostgreSQL, MySQL, MongoDB, SQLite, or custom adapters
 - ⚡ **Framework Flexible** - Fiber, Chi, Gin, Echo, Gorilla Mux, or standard net/http
 - 🔒 **Secure by Default** - CSRF protection, rate limiting, secure sessions
+- 🛠️ **CLI Tool** - Built-in CLI for easy schema generation and maintenance
 - 📦 **Production Ready** - Built-in session management, migrations, and security features
 
 ## Installation

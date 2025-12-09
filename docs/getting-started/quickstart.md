@@ -70,7 +70,28 @@ func main() {
 
 ## 🗄️ Database Schema
 
-BeaconAuth requires the following tables. You can run this SQL to initialize your Postgres database:
+BeaconAuth requires the following tables. You can easily generate the SQL schema using our CLI.
+
+### Option A: Using the CLI (Recommended)
+
+Generate the SQL schema for your specific database configuration:
+
+```bash
+# Generate schema for Postgres with 2FA support
+go run github.com/marshallshelly/beacon-auth/cmd/beacon@latest generate \
+  --adapter postgres \
+  --plugins twofa \
+  > schema.sql
+
+# Run it against your database
+psql $DATABASE_URL < schema.sql
+```
+
+See the [CLI Documentation](/beacon-auth/concepts/cli) for more options, including UUID and Serial ID support.
+
+### Option B: Manual Setup
+
+If you prefer to copy-paste the SQL manually:
 
 ```sql
 -- Users Table
