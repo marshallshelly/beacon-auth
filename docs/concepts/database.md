@@ -64,25 +64,26 @@ Table Name: `session`
 
 ### Account
 
-Legacy implementation for OAuth/Provider accounts.
+Stores authentication accounts for OAuth providers, email/password credentials, etc.
 
-Table Name: `account`
+Table Name: `accounts`
 
-| Field                      | Type        | Description                               |
-| :------------------------- | :---------- | :---------------------------------------- |
-| `id`                       | `string`    | Unique identifier.                        |
-| `user_id`                  | `string`    | Foreign key to `user.id`.                 |
-| `account_id`               | `string`    | Provider's account ID.                    |
-| `provider_id`              | `string`    | Provider ID (e.g. "google").              |
-| `access_token`             | `string`    | OAuth Access Token.                       |
-| `refresh_token`            | `string`    | OAuth Refresh Token.                      |
-| `access_token_expires_at`  | `timestamp` | Access token expiry.                      |
-| `refresh_token_expires_at` | `timestamp` | Refresh token expiry.                     |
-| `scope`                    | `string`    | OAuth scope.                              |
-| `id_token`                 | `string`    | OIDC ID Token.                            |
-| `password`                 | `string`    | Hashed password (if credential provider). |
-| `created_at`               | `timestamp` | Creation time.                            |
-| `updated_at`               | `timestamp` | Last update time.                         |
+| Field                      | Type        | Description                                                |
+| :------------------------- | :---------- | :--------------------------------------------------------- |
+| `id`                       | `string`    | Unique identifier.                                         |
+| `user_id`                  | `string`    | Foreign key to `users.id`.                                 |
+| `account_id`               | `string`    | Provider's account ID (email for credentials, OAuth ID).   |
+| `provider_id`              | `string`    | Provider ID ("local", "google", "github", etc.).           |
+| `provider_type`            | `string`    | Provider type ("credential", "oauth").                     |
+| `password`                 | `string`    | Hashed password (for credential accounts only).            |
+| `access_token`             | `string`    | OAuth Access Token.                                        |
+| `refresh_token`            | `string`    | OAuth Refresh Token.                                       |
+| `access_token_expires_at`  | `timestamp` | Access token expiry.                                       |
+| `refresh_token_expires_at` | `timestamp` | Refresh token expiry.                                      |
+| `scope`                    | `string`    | OAuth scope.                                               |
+| `id_token`                 | `string`    | OIDC ID Token.                                             |
+| `created_at`               | `timestamp` | Creation time.                                             |
+| `updated_at`               | `timestamp` | Last update time.                                          |
 
 ### Verification
 
@@ -96,6 +97,58 @@ Table Name: `verification`
 | `expires_at` | `timestamp` | Expiration time.               |
 | `created_at` | `timestamp` | Creation time.                 |
 | `updated_at` | `timestamp` | Last update time.              |
+
+## Schema Migration
+
+### Migrating from v0.6.0 and Earlier
+
+If you're using an older schema with `provider` column instead of `provider_id`, you need to migrate:
+
+**PostgreSQL Migration:**
+```sql
+-- Add new columns
+ALTER TABLE accounts ADD COLUMN provider_id VARCHAR(255);
+ALTER TABLE accounts ADD COLUMN provider_type VARCHAR(50);
+
+-- Migrate data (adjust based on your provider values)
+UPDATE accounts SET
+  provider_id = CASE
+    WHEN provider = 'credentials' THEN 'local'
+    ELSE provider
+  END,
+  provider_type = CASE
+    WHEN provider = 'credentials' THEN 'credential'
+    WHEN password IS NOT NULL THEN 'credential'
+    ELSE 'oauth'
+  END;
+
+-- Make columns required
+ALTER TABLE accounts ALTER COLUMN provider_id SET NOT NULL;
+ALTER TABLE accounts ALTER COLUMN provider_type SET NOT NULL;
+
+-- Drop old column
+ALTER TABLE accounts DROP COLUMN provider;
+
+-- Recreate unique constraint
+ALTER TABLE accounts DROP CONSTRAINT IF EXISTS accounts_provider_account_id_key;
+ALTER TABLE accounts ADD CONSTRAINT accounts_provider_account_id_unique UNIQUE(provider_id, account_id);
+```
+
+### Using the CLI Generator
+
+The recommended way to create the correct schema is using the `beacon` CLI tool:
+
+```bash
+# Generate PostgreSQL schema
+beacon generate --adapter postgres --id-type string
+
+# Generate with UUID IDs
+beacon generate --adapter postgres --id-type uuid
+
+# Generate for other databases
+beacon generate --adapter mysql --id-type string
+beacon generate --adapter sqlite --id-type string
+```
 
 ## Extending the Schema
 

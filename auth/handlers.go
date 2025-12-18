@@ -279,22 +279,8 @@ func (h *Handler) createUserWithPassword(ctx context.Context, email, name, hashe
 		return nil, err
 	}
 
-	// Generate account ID
-	accountID, err := crypto.GenerateID()
-	if err != nil {
-		return nil, err
-	}
-
-	// Store password hash in accounts table
-	_, err = h.internal.Adapter().Create(ctx, "accounts", map[string]interface{}{
-		"id":            accountID,
-		"user_id":       user.ID,
-		"provider":      "credential",
-		"provider_type": "email",
-		"password_hash": hashedPassword,
-		"created_at":    time.Now(),
-		"updated_at":    time.Now(),
-	})
+	// Create credential account using InternalAdapter (uses correct column names)
+	_, err = h.internal.CreateCredentialAccount(ctx, user.ID, email, hashedPassword)
 	if err != nil {
 		return nil, err
 	}
@@ -307,7 +293,7 @@ func (h *Handler) getUserPasswordHash(ctx context.Context, userID string) (strin
 		Model: "accounts",
 		Where: []core.WhereClause{
 			{Field: "user_id", Operator: core.OpEqual, Value: userID},
-			{Field: "provider_type", Operator: core.OpEqual, Value: "email"},
+			{Field: "provider_type", Operator: core.OpEqual, Value: "credential"},
 		},
 	}
 
@@ -320,7 +306,8 @@ func (h *Handler) getUserPasswordHash(ctx context.Context, userID string) (strin
 		return "", core.ErrUserNotFound
 	}
 
-	hash, ok := result["password_hash"].(string)
+	// The column name is "password", not "password_hash"
+	hash, ok := result["password"].(string)
 	if !ok {
 		return "", fmt.Errorf("password hash not found")
 	}

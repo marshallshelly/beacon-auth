@@ -5,6 +5,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+## [0.6.2] - 2025-12-18
+
+### Fixed
+
+- **Critical: SignIn Credential Retrieval**: Fixed "Failed to retrieve credentials" error during email/password authentication.
+  - `auth/handlers.go` was using incorrect column names (`provider`, `password_hash`) instead of the correct better-auth schema columns (`provider_id`, `provider_type`, `password`).
+  - Updated `createUserWithPassword()` to use `InternalAdapter.CreateCredentialAccount()` which uses correct column names.
+  - Updated `getUserPasswordHash()` to query for `provider_type="credential"` and read from `password` column.
+  - **Migration Required**: Users upgrading from v0.6.1 or earlier need to migrate their database schema. See `docs/concepts/database.md` for migration guide.
+
+### Changed
+
+- **Documentation**: Updated `docs/concepts/database.md` to include `provider_type` column in accounts table schema and added migration guide for users on older schemas.
+
 ## [0.6.1] - 2025-12-09
 
 ### Fixed
@@ -182,7 +198,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Error handling system
 - Logging infrastructure
 
-[Unreleased]: https://github.com/marshallshelly/beacon-auth/compare/v0.5.0...HEAD
+[Unreleased]: https://github.com/marshallshelly/beacon-auth/compare/v0.6.2...HEAD
+[0.6.2]: https://github.com/marshallshelly/beacon-auth/compare/v0.6.1...v0.6.2
+[0.6.1]: https://github.com/marshallshelly/beacon-auth/compare/v0.6.0...v0.6.1
+[0.6.0]: https://github.com/marshallshelly/beacon-auth/compare/v0.5.0...v0.6.0
 [0.5.0]: https://github.com/marshallshelly/beacon-auth/compare/v0.4.0...v0.5.0
 [0.4.0]: https://github.com/marshallshelly/beacon-auth/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/marshallshelly/beacon-auth/compare/v0.2.1...v0.3.0
