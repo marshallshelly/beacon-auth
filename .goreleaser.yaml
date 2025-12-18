@@ -106,8 +106,6 @@ release:
     **Full Changelog**: https://github.com/marshallshelly/beacon-auth/compare/{{ .PreviousTag }}...{{ .Tag }}
 
 # Go module proxy integration
+# Disabled: proxy indexing happens automatically after release
 gomod:
-  proxy: true
-  env:
-    - GOPRIVATE=
-    - GOPROXY=https://proxy.golang.org,direct
+  proxy: false
