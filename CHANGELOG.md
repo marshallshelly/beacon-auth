@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.6.3] - 2025-12-18
+
+### Fixed
+
+- **Session Creation in Multi-Tenant Environments**: Fixed "Failed to create session" error when session manager performed redundant user lookup that could fail in multi-tenant contexts.
+  - Added `User` field to `SessionOptions` to allow passing pre-fetched user data
+  - Updated `session.Manager.Create()` to use pre-fetched user from options, avoiding redundant database lookup
+  - Updated `auth.Handler` SignIn and SignUp to pass user in `SessionOptions`
+  - This fix eliminates the redundant user lookup that was causing failures when adapters were scoped to different tenant databases
+
 ## [0.6.2] - 2025-12-18
 
 ### Fixed
@@ -198,7 +208,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Error handling system
 - Logging infrastructure
 
-[Unreleased]: https://github.com/marshallshelly/beacon-auth/compare/v0.6.2...HEAD
+[Unreleased]: https://github.com/marshallshelly/beacon-auth/compare/v0.6.3...HEAD
+[0.6.3]: https://github.com/marshallshelly/beacon-auth/compare/v0.6.2...v0.6.3
 [0.6.2]: https://github.com/marshallshelly/beacon-auth/compare/v0.6.1...v0.6.2
 [0.6.1]: https://github.com/marshallshelly/beacon-auth/compare/v0.6.0...v0.6.1
 [0.6.0]: https://github.com/marshallshelly/beacon-auth/compare/v0.5.0...v0.6.0

@@ -121,6 +121,7 @@ func (h *Handler) SignUp(w http.ResponseWriter, r *http.Request) {
 
 	// Create session
 	session, _, token, err := h.sessionManager.Create(ctx, user.ID, &core.SessionOptions{
+		User:      user, // Pass pre-fetched user to avoid redundant lookup
 		IPAddress: getIPAddress(r),
 		UserAgent: r.UserAgent(),
 	})
@@ -189,6 +190,7 @@ func (h *Handler) SignIn(w http.ResponseWriter, r *http.Request) {
 
 	// Create session
 	session, _, token, err := h.sessionManager.Create(ctx, user.ID, &core.SessionOptions{
+		User:      user, // Pass pre-fetched user to avoid redundant lookup
 		IPAddress: getIPAddress(r),
 		UserAgent: r.UserAgent(),
 	})

@@ -71,6 +71,7 @@ type Verification struct {
 
 // SessionOptions holds options for session creation
 type SessionOptions struct {
+	User       *User          // Pre-fetched user to avoid redundant lookup
 	IPAddress  string
 	UserAgent  string
 	RememberMe bool

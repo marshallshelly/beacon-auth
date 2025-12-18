@@ -197,9 +197,13 @@ func (m *Manager) Create(ctx context.Context, userID string, opts *core.SessionO
 		session.UserAgent = opts.UserAgent
 	}
 
-	// Get user data
+	// Get user data - use pre-fetched user if provided, otherwise lookup
 	var user *core.User
-	if m.dbStore != nil {
+	if opts != nil && opts.User != nil {
+		// Use pre-fetched user from options (avoids redundant lookup)
+		user = opts.User
+	} else if m.dbStore != nil {
+		// Fallback to database lookup
 		user, err = m.dbStore.internal.FindUserByID(ctx, userID)
 		if err != nil {
 			return nil, nil, "", fmt.Errorf("failed to find user: %w", err)
